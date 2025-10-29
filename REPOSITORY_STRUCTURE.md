@@ -161,8 +161,8 @@ Users upload to: Claude.ai Settings → Skills
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/deep-code-reader.git
-   cd deep-code-reader
+   git clone https://github.com/Kuroakira/claude_skills.git
+   cd claude_skills
    ```
 
 2. **Make changes** in the `deep-code-reader/` directory

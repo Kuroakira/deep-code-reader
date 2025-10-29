@@ -30,41 +30,82 @@ deep-code-reader/
 
 ## 🚀 Installation
 
-### For Claude.ai Users (Recommended)
+### For Claude Desktop App (Recommended)
 
-1. **Download the packaged skill** from [Releases](../../releases)
-2. **Upload to Claude.ai**:
-   - Go to Settings → Skills
-   - Click "Upload Skill"
-   - Select the downloaded `.skill` file
-3. The skill will automatically activate when you work with code
+The Claude desktop app supports Skills through its built-in Skills interface:
 
-### For Claude Code Users
+1. **Download the packaged skill file**:
+   - Download `deep-code-reader.skill` from [Releases](../../releases)
+
+2. **Install via Skills interface**:
+   - Open Claude Desktop App
+   - Go to **Settings** → **Skills**
+   - Click **"Upload Skill"**
+   - Select the downloaded `deep-code-reader.skill` file
+
+3. **Activation**:
+   - The skill will automatically activate when you work with code or ask about architecture/analysis
+
+### For Claude Code (CLI)
+
+Claude Code uses a different skills system. There are two approaches:
+
+#### Option 1: Using the Skill Command (if available)
+
+```bash
+# Navigate to your project directory
+cd /path/to/your/project
+
+# Install the skill using the Skill tool
+# In Claude Code, run:
+/skill deep-code-reader
+```
+
+**Note**: The `/plugin install` command is not supported for skills. Skills are invoked with the `/skill` command or loaded automatically based on context.
+
+#### Option 2: Manual Installation
 
 ```bash
 # Clone this repository
-git clone https://github.com/your-username/deep-code-reader.git
+git clone https://github.com/Kuroakira/claude_skills.git
 
-# Install to Claude skills directory
+# Copy the skill directory to Claude's skills location
 mkdir -p ~/.claude/skills
-cp -r deep-code-reader ~/.claude/skills/
+cp -r claude_skills/deep-code-reader ~/.claude/skills/deep-code-reader
 
-# The skill is now available in Claude Code
+# Verify installation
+ls ~/.claude/skills/deep-code-reader
 ```
+
+#### Activating the Skill in Claude Code
+
+Once installed, the skill can be activated:
+
+1. **Automatic activation**: The skill activates when Claude detects code analysis requests
+2. **Manual invocation**: Use the Skill tool to explicitly invoke it:
+   ```
+   /skill deep-code-reader
+   ```
 
 ### For Developers (Contributing)
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/deep-code-reader.git
-cd deep-code-reader
+git clone https://github.com/Kuroakira/claude_skills.git
+cd claude_skills
 
 # Make changes to scripts, SKILL.md, etc.
-# Test your changes
+# Test your changes with Claude
 
-# Package the skill for distribution
-python /path/to/anthropic/skills/skill-creator/scripts/package_skill.py . ./dist
+# Package the skill for distribution (creates .skill file)
+# Follow Anthropic's skill packaging guidelines
 ```
+
+### Installation Notes
+
+- **Claude Desktop App** uses `.skill` files that contain packaged skill data
+- **Claude Code** loads skills from the `~/.claude/skills/` directory
+- Skills are different from plugins - they provide context and instructions to Claude rather than external tool integrations
 
 ### Usage Examples
 

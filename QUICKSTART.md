@@ -13,11 +13,11 @@ This guide will help you get started with the Deep Code Reader skill in 5 minute
 ### Option 2: Claude Code (Terminal)
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/deep-code-reader.git
+git clone https://github.com/Kuroakira/claude_skills.git
 
 # Copy to skills directory
 mkdir -p ~/.claude/skills
-cp -r deep-code-reader ~/.claude/skills/
+cp -r claude_skills/deep-code-reader ~/.claude/skills/deep-code-reader
 
 # The skill is now available in Claude Code
 ```
