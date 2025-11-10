@@ -1,248 +1,286 @@
-# Deep Code Reader - Claude Skill
+# OSS Learning Platform
 
-A comprehensive Claude Skill for understanding complex codebases through systematic analysis, visualization, and context gathering. Perfect for developers joining OSS projects or performing deep code reviews.
+**Automated OSS codebase analysis with intelligent insights and Notion integration, powered by Claude Code and MCP servers.**
 
-## 🎯 What This Skill Does
+Perfect for developers who want to:
+- 🚀 Quickly understand unfamiliar OSS projects
+- 📚 Build a knowledge base of analyzed codebases
+- 🤝 Identify contribution opportunities
+- 📊 Generate comprehensive architecture documentation
 
-Deep Code Reader helps you understand unfamiliar codebases by:
+## ✨ Features
 
-- 🏗️ **Generating architecture diagrams** (Mermaid & draw.io formats)
-- 🔄 **Tracing data flows** through the system
-- 📊 **Analyzing dependencies** and identifying circular dependencies
-- 🔍 **Gathering PR context** from GitHub (issues, reviews, discussions)
+### 🔍 Deep Code Analysis
+- **Architecture visualization** - Mermaid & draw.io diagrams
+- **Data flow tracing** - Understand how data moves through the system
+- **Dependency mapping** - Identify module relationships and circular dependencies
+- **Pattern recognition** - Detect MVC, Clean Architecture, and other patterns
 
-## 📁 Repository Structure
+### 🤖 Intelligent Automation
+- **One-command installation** - `./install.sh` sets up everything
+- **Strategic analysis** - AI-powered analysis planning with Sequential Thinking
+- **Symbol-level understanding** - Serena MCP for semantic code comprehension
+- **Framework expertise** - Context7 MCP for official documentation patterns
 
-```
-skills/
-└── deep-code-reader/
-    ├── SKILL.md                              # Main skill instructions for Claude
-    ├── scripts/                              # Standalone analysis scripts
-    │   ├── generate_architecture_diagram.py  # Create architecture diagrams
-    │   ├── analyze_data_flow.py             # Trace data through the system
-    │   ├── analyze_dependencies.py          # Map dependencies
-    │   └── fetch_pr_context.py              # Get GitHub PR context
-    ├── references/                           # Reference documentation
-    │   ├── code-reading-methodology.md      # Effective code reading strategies
-    │   └── architecture-patterns.md         # Common architecture patterns
-    └── assets/                               # Templates and resources
-        └── architecture-template.drawio     # draw.io diagram template
-```
+### 📝 Notion Integration
+- **Automatic export** - Analysis results saved to your Notion workspace
+- **Structured documentation** - Consistent, searchable analysis pages
+- **Team collaboration** - Share insights with your team
+- **Knowledge base** - Build a library of analyzed projects
 
-## 🚀 Installation
+## 🚀 Quick Start
 
-### For Claude Desktop App (Recommended)
-
-The Claude desktop app supports Skills through its built-in Skills interface:
-
-1. **Download the packaged skill file**:
-   - Download `deep-code-reader.skill` from [Releases](https://github.com/Kuroakira/claude_skills/releases)
-
-2. **Install via Skills interface**:
-   - Open Claude Desktop App
-   - Go to **Settings** → **Skills**
-   - Click **"Upload Skill"**
-   - Select the downloaded `deep-code-reader.skill` file
-
-3. **Activation**:
-   - The skill will automatically activate when you work with code or ask about architecture/analysis
-
-### For Claude Code (CLI)
-
-Claude Code uses a different skills system. There are two approaches:
-
-#### Option 1: Using the Skill Command (if available)
-
-```bash
-# Navigate to your project directory
-cd /path/to/your/project
-
-# Install the skill using the Skill tool
-# In Claude Code, run:
-/skill deep-code-reader
-```
-
-**Note**: The `/plugin install` command is not supported for skills. Skills are invoked with the `/skill` command or loaded automatically based on context.
-
-#### Option 2: Manual Installation
-
-```bash
-# Clone this repository
-git clone https://github.com/Kuroakira/claude_skills.git
-
-# Copy the skill directory to Claude's skills location
-mkdir -p ~/.claude/skills
-cp -r claude_skills/skills/deep-code-reader ~/.claude/skills/deep-code-reader
-
-# Verify installation
-ls ~/.claude/skills/deep-code-reader
-```
-
-#### Activating the Skill in Claude Code
-
-Once installed, the skill can be activated:
-
-1. **Automatic activation**: The skill activates when Claude detects code analysis requests
-2. **Manual invocation**: Use the Skill tool to explicitly invoke it:
-   ```
-   /skill deep-code-reader
-   ```
-
-### For Developers (Contributing)
+### Installation (2 minutes)
 
 ```bash
 # Clone the repository
 git clone https://github.com/Kuroakira/claude_skills.git
 cd claude_skills
 
-# Make changes to scripts, SKILL.md, etc.
-# Test your changes with Claude
-
-# Package the skill for distribution (creates .skill file)
-# Follow Anthropic's skill packaging guidelines
+# Run the installer
+./install.sh
 ```
 
-### Installation Notes
+The installer will:
+1. ✅ Check dependencies (Node.js, Python, npm)
+2. 📦 Install MCP servers (GitHub, Brave Search, Notion)
+3. ⚙️  Configure Claude Code
+4. 🎯 Install skills and commands
+5. 🔐 Set up Notion integration (optional)
 
-- **Claude Desktop App** uses `.skill` files that contain packaged skill data
-- **Claude Code** loads skills from the `~/.claude/skills/` directory
-- Skills are different from plugins - they provide context and instructions to Claude rather than external tool integrations
+### First Analysis (30 seconds)
 
-### Usage Examples
+```bash
+# Start Claude Code
+claude-code
 
-**Understand a new OSS project:**
-```
-Help me understand the architecture of this codebase [upload or link to repo]
-```
-
-**Trace a specific flow:**
-```
-Show me how authentication works in this codebase
-```
-
-**Analyze a PR:**
-```
-Analyze this PR and show me what changed: https://github.com/org/repo/pull/123
+# Analyze any GitHub repository
+/analyze-oss https://github.com/expressjs/express main
 ```
 
-**Generate documentation:**
+**That's it!** Claude will:
+- 🔄 Clone the repository
+- 🏗️ Analyze architecture
+- 📊 Generate diagrams
+- 💡 Provide contribution recommendations
+- 📤 Export everything to Notion
+
+## 📁 Project Structure
+
 ```
-Create architecture diagrams for this project in both Mermaid and draw.io formats
+claude_skills/
+├── install.sh                    # One-command installer
+├── commands/                     # Slash commands
+│   ├── analyze-oss.md           # Main analysis command
+│   ├── setup-notion.md          # Notion configuration
+│   └── export-analysis.md       # Manual export
+├── config/                       # Configuration files
+│   ├── mcp_servers.json         # MCP server setup
+│   ├── notion_template.json     # Notion page template
+│   └── default_settings.json    # Platform settings
+├── scripts/                      # Utilities
+│   ├── setup/                   # Installation scripts
+│   └── utils/                   # Helper functions
+├── skills/                       # Claude Skills
+│   └── deep-code-reader/        # Code analysis skill
+└── docs/                         # Documentation
 ```
 
-## 📋 Features
+## 🎯 Usage Examples
 
-### 1. Architecture Visualization
-- Automatically detects architectural patterns (MVC, Clean Architecture, etc.)
-- Generates multi-format diagrams (Mermaid for docs, draw.io for editing)
-- Identifies layers and component relationships
+### Basic Analysis
 
-### 2. Data Flow Analysis
-- Traces function call chains
-- Identifies authentication flows automatically
-- Maps data processing pipelines
-- Detects common patterns
+```bash
+# Analyze a repository at HEAD
+/analyze-oss https://github.com/vuejs/core
 
-### 3. Dependency Analysis
-- Maps module and package dependencies
-- Detects circular dependencies (code smells)
-- Identifies tightly coupled components
-- Analyzes external package usage
+# Analyze a specific commit
+/analyze-oss https://github.com/react/react v18.0.0
 
-### 4. PR Context Gathering
-- Fetches complete PR information from GitHub
-- Links to related issues
-- Includes review comments and discussions
-- Shows commit history and context
+# Quick architecture-only analysis
+/analyze-oss https://github.com/django/django --quick
+```
 
-## 🛠️ Included Scripts
+### Notion Integration
 
-All analysis scripts work standalone (no external dependencies):
+```bash
+# Set up Notion (first time only)
+/setup-notion
 
-- `generate_architecture_diagram.py` - Create architecture diagrams
-- `analyze_data_flow.py` - Trace data through the system
-- `analyze_dependencies.py` - Map dependencies and find issues
-- `fetch_pr_context.py` - Get comprehensive PR context
+# Analysis automatically exports to Notion
+/analyze-oss https://github.com/sveltejs/svelte
 
-## 📚 Reference Materials
+# Manually export previous analysis
+/export-analysis
+```
 
-- **Code Reading Methodology** - Proven strategies for understanding codebases
-- **Architecture Patterns** - Recognition guide for common patterns
-- **draw.io Templates** - Ready-to-use architecture diagram templates
+### Advanced Options
 
-## 💡 Use Cases
+```bash
+# Focus on specific directory
+/analyze-oss <url> --focus src/core
 
-### For OSS Contributors
-- Quickly understand a new project before contributing
-- Identify where to add new features
-- Understand the impact of potential changes
+# Export with custom template
+/export-analysis --template detailed
 
-### For Code Reviewers
-- Get full context on PRs before reviewing
-- Understand change implications
-- Verify architectural consistency
+# Batch export multiple analyses
+/export-analysis --batch
+```
 
-### For Documentation
-- Generate up-to-date architecture diagrams
-- Create visual guides for new team members
-- Document data flows and dependencies
+## 💡 What You Get
 
-### For Refactoring
-- Identify tightly coupled code
-- Find circular dependencies
-- Plan architectural improvements
+After analyzing a repository, you'll receive:
 
-## 🎨 Output Formats
+### 📊 In Claude Code
 
-- **Mermaid (.mmd)** - Embeddable in GitHub/GitLab markdown
-- **draw.io (.drawio)** - Editable diagrams for presentations
-- **JSON (.json)** - Complete analysis data for custom processing
-- **Markdown (.md)** - Human-readable summaries
+```markdown
+## Analysis Complete: Express.js
+
+### Architecture
+- Pattern: Layered Architecture
+- Layers: Router → Middleware → Application → Response
+- Tech Stack: JavaScript, Node.js
+
+### Key Data Flows
+- HTTP Request → Middleware Chain → Route Handler → Response
+- Error Handling → Error Middleware → Client
+
+### Dependencies
+- External: 30 packages
+- Circular deps: 0
+- Key libraries: body-parser, cookie-parser, debug
+
+### Contribution Opportunities
+1. Add TypeScript definitions for middleware
+2. Improve error handling in router module
+3. Add tests for edge cases in request parsing
+
+Notion: https://notion.so/your-analysis-page
+```
+
+### 📝 In Notion
+
+A beautifully formatted page with:
+- 🏗️ Architecture overview with diagrams
+- 🔄 Data flow visualizations
+- 📦 Dependency graphs
+- 💡 Actionable contribution recommendations
+- 📋 Raw analysis data (JSON)
+
+## 🛠️ MCP Servers Used
+
+This platform leverages powerful MCP servers:
+
+### Built-in (Claude Code)
+- **Serena** - Semantic code understanding & project memory
+- **Context7** - Official framework documentation
+- **Sequential Thinking** - Strategic analysis planning
+
+### External (Auto-installed)
+- **GitHub MCP** - Repository metadata and access
+- **Brave Search MCP** - Web search for documentation
+- **Notion MCP** - Automated export to Notion
+
+## 📚 Documentation
+
+- **[QUICKSTART.md](QUICKSTART.md)** - Get started in 5 minutes
+- **[REPOSITORY_STRUCTURE.md](REPOSITORY_STRUCTURE.md)** - Project organization
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+- **[docs/MCP_SETUP.md](docs/MCP_SETUP.md)** - MCP server configuration
+- **[docs/NOTION_INTEGRATION.md](docs/NOTION_INTEGRATION.md)** - Notion setup guide
+
+## 🧪 Supported Languages & Frameworks
+
+### Current Support
+- **Python** - Full support (Django, Flask, FastAPI)
+- **JavaScript/TypeScript** - Full support (React, Vue, Express, Next.js)
+
+### Planned Support
+- **Go** - Coming soon
+- **Rust** - Coming soon
+- **Java** - Coming soon
+- **Ruby** - Coming soon
 
 ## 🔧 Requirements
 
-- Python 3.7+ (for standalone script usage)
-- No external dependencies (scripts use standard library only)
-- GitHub token (optional, for higher API rate limits)
+- **Node.js** v18+ (for MCP servers)
+- **Python** 3.8+ (for analysis scripts)
+- **Claude Code** (CLI or Desktop)
+- **Notion account** (optional, for exports)
+- **GitHub account** (for analyzing private repos)
 
-## 📖 Documentation
+## 🎓 Use Cases
 
-Full documentation is available in the skill's SKILL.md file, including:
-- Detailed usage examples
-- Best practices for each analysis type
-- Integration tips (IDE, CI/CD, documentation)
-- Troubleshooting guide
-- Advanced usage patterns
+### For Open Source Contributors
+```
+1. Discover new projects to contribute to
+2. Understand codebase before first PR
+3. Identify "good first issues"
+4. Learn architectural patterns
+```
+
+### For Development Teams
+```
+1. Onboard new team members faster
+2. Document legacy codebases
+3. Plan refactoring initiatives
+4. Share architecture knowledge
+```
+
+### For Technical Leads
+```
+1. Evaluate potential dependencies
+2. Assess code quality and architecture
+3. Make informed technology decisions
+4. Build technical documentation
+```
+
+### For Learners
+```
+1. Study real-world code architecture
+2. Learn from established projects
+3. Build a personal knowledge base
+4. Understand best practices
+```
 
 ## 🤝 Contributing
 
-Contributions are welcome! This skill focuses on:
-- Static code analysis
-- Visual diagram generation
-- Context gathering
-- Code reading methodologies
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
+- Development setup
+- Code style guidelines
+- Testing requirements
+- Pull request process
 
-Ideas for improvements:
-- Support for additional languages (Go, Rust, Java, etc.)
-- More architectural pattern detection
-- Integration with additional tools
-- Performance optimizations for large codebases
+Ideas for contributions:
+- Support for additional languages
+- New analysis capabilities
+- Alternative export formats
+- Performance optimizations
 
 ## 📄 License
 
-MIT License - see LICENSE file for details
+MIT License - see [LICENSE](LICENSE) for details
 
 ## 🙏 Acknowledgments
 
-Created as part of Anthropic's Claude Skills system. Inspired by the need for better tools to understand complex, unfamiliar codebases.
+Built with:
+- [Claude Code](https://claude.com/claude-code) by Anthropic
+- [Model Context Protocol (MCP)](https://modelcontextprotocol.io/)
+- [Notion API](https://developers.notion.com/)
+- [GitHub API](https://docs.github.com/en/rest)
+
+Inspired by the need for better tools to understand and contribute to open source projects.
 
 ## 🔗 Links
 
-- [Anthropic Skills Documentation](https://docs.anthropic.com/en/docs/build-with-claude/skills)
-- [Claude Skills Repository](https://github.com/anthropics/skills)
-- [Mermaid Documentation](https://mermaid.js.org/)
-- [draw.io](https://www.drawio.com/)
+- **GitHub Repository**: https://github.com/Kuroakira/claude_skills
+- **Issues & Feedback**: https://github.com/Kuroakira/claude_skills/issues
+- **Discussions**: https://github.com/Kuroakira/claude_skills/discussions
+- **Anthropic Skills**: https://docs.anthropic.com/en/docs/build-with-claude/skills
+- **MCP Documentation**: https://modelcontextprotocol.io/
 
 ---
 
 **Built with ❤️ for the OSS community**
+
+*Making open source more accessible, one analysis at a time.*
