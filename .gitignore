@@ -40,17 +40,29 @@ env/
 htmlcov/
 .tox/
 
-# Output files from running scripts
+# Output files from running scripts (test outputs)
 *.mmd
 *.drawio
 *_analysis.json
 test_*
 pr_context.*
 
-# Skill package builds
-*.skill
-dist/
-
 # Temporary files
 *.tmp
 *.bak
+temp/
+tmp/
+
+# Node modules (for MCP servers)
+node_modules/
+
+# Environment and secrets
+.env
+*.key
+*_config.json
+!config/default_*.json
+!config/*_template.json
+
+# User-specific configuration
+config/notion_config.json
+config/user_settings.json

@@ -5,7 +5,7 @@ This guide will help you get started with the Deep Code Reader skill in 5 minute
 ## Installation
 
 ### Option 1: Claude.ai (Web/Mobile/Desktop)
-1. Download `deep-code-reader.skill` from releases
+1. Download `skills/deep-code-reader.skill` from releases
 2. Open Claude.ai → Settings → Skills
 3. Click "Upload Skill" and select the `.skill` file
 4. The skill activates automatically when you work with code
@@ -17,7 +17,7 @@ git clone https://github.com/Kuroakira/claude_skills.git
 
 # Copy to skills directory
 mkdir -p ~/.claude/skills
-cp -r claude_skills/deep-code-reader ~/.claude/skills/deep-code-reader
+cp -r claude_skills/skills/deep-code-reader ~/.claude/skills/deep-code-reader
 
 # The skill is now available in Claude Code
 ```

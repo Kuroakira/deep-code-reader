@@ -5,21 +5,26 @@ This document explains the structure of the Deep Code Reader skill repository.
 ## 📁 Top-Level Structure
 
 ```
-deep-code-reader-repo/
-├── deep-code-reader/          # The actual skill (this is what gets packaged)
-│   ├── SKILL.md              # Main skill instructions for Claude
-│   ├── scripts/              # Analysis scripts
-│   ├── references/           # Reference documentation
-│   ├── assets/               # Templates and resources
-│   └── .gitignore           # Git ignore patterns
+claude_skills/
+├── skills/                    # All Claude Skills
+│   └── deep-code-reader/     # The actual skill (this is what gets packaged)
+│       ├── SKILL.md          # Main skill instructions for Claude
+│       ├── scripts/          # Analysis scripts
+│       ├── references/       # Reference documentation
+│       └── assets/           # Templates and resources
+├── skills/deep-code-reader.skill  # Packaged skill file for distribution
 ├── README.md                 # Main repository documentation
 ├── QUICKSTART.md             # Quick start guide for users
 ├── CONTRIBUTING.md           # Contribution guidelines
 ├── LICENSE                   # MIT License
-└── RELEASE_NOTES.md         # Template for GitHub releases
+└── REPOSITORY_STRUCTURE.md  # This file
 ```
 
-## 🎯 The `deep-code-reader/` Directory
+## 🎯 The `skills/` Directory
+
+This directory contains all Claude Skills for the platform. Each skill is self-contained.
+
+### `skills/deep-code-reader/`
 
 This is the **actual skill** that gets packaged into `.skill` file. It contains:
 
@@ -89,7 +94,7 @@ Template for creating GitHub releases.
 
 ### 1. Development
 ```
-Edit files in deep-code-reader/
+Edit files in skills/deep-code-reader/
 ├── SKILL.md (instructions)
 ├── scripts/*.py (analysis logic)
 ├── references/*.md (documentation)
@@ -99,7 +104,7 @@ Edit files in deep-code-reader/
 ### 2. Testing
 ```bash
 # Test scripts individually
-python deep-code-reader/scripts/analyze_dependencies.py ./test-project
+python skills/deep-code-reader/scripts/analyze_dependencies.py ./test-project
 
 # Test the complete skill by uploading to Claude.ai
 # or installing in Claude Code
@@ -108,14 +113,15 @@ python deep-code-reader/scripts/analyze_dependencies.py ./test-project
 ### 3. Packaging
 ```bash
 # Package the skill for distribution
-python /path/to/skill-creator/scripts/package_skill.py deep-code-reader ./dist
+cd skills
+python /path/to/skill-creator/scripts/package_skill.py deep-code-reader ./
 
-# This creates: dist/deep-code-reader.skill
+# This creates: skills/deep-code-reader.skill
 ```
 
 ### 4. Git Commit
 ```bash
-git add deep-code-reader/
+git add skills/deep-code-reader/
 git commit -m "Add new feature X"
 git push
 ```
@@ -123,35 +129,35 @@ git push
 ### 5. GitHub Release
 1. Go to GitHub Releases
 2. Create new release with tag (e.g., v1.0.0)
-3. Attach `dist/deep-code-reader.skill`
+3. Attach `skills/deep-code-reader.skill`
 4. Users download this file to use the skill
 
 ## 🎨 What Gets Published Where
 
 ### GitHub Repository (Source Code)
 ```
-✅ deep-code-reader/ directory (full source)
+✅ skills/ directory (all skills source code)
+✅ skills/deep-code-reader/ (skill source)
+✅ skills/*.skill (packaged distribution files)
 ✅ README.md
 ✅ QUICKSTART.md
 ✅ CONTRIBUTING.md
 ✅ LICENSE
-✅ RELEASE_NOTES.md (template)
 
-❌ dist/ (build artifacts - ignored)
-❌ *.skill files (distribution files - not source)
 ❌ Test outputs (*.mmd, *.json, etc.)
+❌ Temporary build artifacts
 ```
 
 ### GitHub Releases (Distribution)
 ```
-✅ deep-code-reader.skill (packaged skill file)
-✅ Release notes (from RELEASE_NOTES.md template)
+✅ skills/deep-code-reader.skill (packaged skill file)
+✅ Release notes
 ✅ Source code (automatic GitHub archive)
 ```
 
 ### Claude.ai (User Installation)
 ```
-Users download: deep-code-reader.skill (from GitHub Release)
+Users download: skills/deep-code-reader.skill (from GitHub Release)
 Users upload to: Claude.ai Settings → Skills
 ```
 
@@ -165,16 +171,17 @@ Users upload to: Claude.ai Settings → Skills
    cd claude_skills
    ```
 
-2. **Make changes** in the `deep-code-reader/` directory
+2. **Make changes** in the `skills/deep-code-reader/` directory
 
 3. **Test your changes**
    ```bash
    # Test scripts
-   python deep-code-reader/scripts/your_script.py
-   
+   python skills/deep-code-reader/scripts/your_script.py
+
    # Package and test in Claude
-   python /path/to/skill-creator/scripts/package_skill.py deep-code-reader ./dist
-   # Upload dist/deep-code-reader.skill to Claude.ai
+   cd skills
+   python /path/to/skill-creator/scripts/package_skill.py deep-code-reader ./
+   # Upload skills/deep-code-reader.skill to Claude.ai
    ```
 
 4. **Update documentation** if needed
@@ -184,7 +191,7 @@ Users upload to: Claude.ai Settings → Skills
 
 5. **Commit and PR**
    ```bash
-   git add deep-code-reader/
+   git add skills/deep-code-reader/
    git commit -m "Your descriptive commit message"
    git push origin your-branch
    # Create PR on GitHub
@@ -220,7 +227,7 @@ Users upload to: Claude.ai Settings → Skills
 The `.skill` file is a ZIP archive containing the skill directory:
 
 ```
-deep-code-reader.skill (ZIP file)
+skills/deep-code-reader.skill (ZIP file)
 └── deep-code-reader/
     ├── SKILL.md
     ├── scripts/
@@ -236,13 +243,13 @@ Users can:
 ## 🔍 Finding Your Way Around
 
 **Want to understand how the skill works?**
-→ Read `deep-code-reader/SKILL.md`
+→ Read `skills/deep-code-reader/SKILL.md`
 
 **Want to modify analysis logic?**
-→ Edit `deep-code-reader/scripts/*.py`
+→ Edit `skills/deep-code-reader/scripts/*.py`
 
 **Want to add architectural patterns?**
-→ Edit `deep-code-reader/references/architecture-patterns.md`
+→ Edit `skills/deep-code-reader/references/architecture-patterns.md`
 
 **Want to improve user docs?**
 → Edit `README.md` or `QUICKSTART.md`
@@ -250,20 +257,18 @@ Users can:
 **Want to contribute?**
 → Read `CONTRIBUTING.md`
 
-**Want to create a release?**
-→ Follow `RELEASE_NOTES.md`
-
 ## 🚀 Quick Commands
 
 ```bash
 # Test a script
-python deep-code-reader/scripts/analyze_dependencies.py ./your-project
+python skills/deep-code-reader/scripts/analyze_dependencies.py ./your-project
 
 # Package the skill
-python /path/to/skill-creator/scripts/package_skill.py deep-code-reader ./dist
+cd skills
+python /path/to/skill-creator/scripts/package_skill.py deep-code-reader ./
 
 # Install locally for testing
-cp -r deep-code-reader ~/.claude/skills/
+cp -r skills/deep-code-reader ~/.claude/skills/
 
 # Create a release
 # 1. Tag the version
@@ -271,28 +276,29 @@ git tag v1.0.0
 git push origin v1.0.0
 
 # 2. Package the skill
-python /path/to/skill-creator/scripts/package_skill.py deep-code-reader ./dist
+cd skills
+python /path/to/skill-creator/scripts/package_skill.py deep-code-reader ./
 
-# 3. Create GitHub release and attach dist/deep-code-reader.skill
+# 3. Create GitHub release and attach skills/deep-code-reader.skill
 ```
 
 ## ❓ FAQ
 
-**Q: Why is there both a `deep-code-reader/` directory and a `deep-code-reader.skill` file?**
-A: The directory is the source code (on GitHub). The `.skill` file is the packaged distribution (in Releases). Think of it like source code vs compiled binary.
+**Q: Why is there both a `skills/deep-code-reader/` directory and a `skills/deep-code-reader.skill` file?**
+A: The directory is the source code (on GitHub). The `.skill` file is the packaged distribution (in Releases and repository). Think of it like source code vs compiled binary.
 
 **Q: Do I commit the `.skill` file to Git?**
-A: No, add `*.skill` to `.gitignore`. Only attach it to GitHub Releases.
+A: Yes, the `.skill` file is committed in the `skills/` directory for easy distribution. It's also attached to GitHub Releases.
 
 **Q: Where do test outputs go?**
 A: Test outputs (*.mmd, *.json, etc.) should be gitignored and not committed.
 
 **Q: How do I update the skill description?**
-A: Edit the `description` field in `deep-code-reader/SKILL.md` frontmatter.
+A: Edit the `description` field in `skills/deep-code-reader/SKILL.md` frontmatter.
 
 **Q: Can users modify the skill?**
 A: Yes, they can extract the `.skill` file (it's a ZIP), modify contents, and repackage.
 
 ---
 
-**Remember:** The `deep-code-reader/` directory is your source code. Everything else is documentation and tooling to help users and contributors.
+**Remember:** The `skills/` directory contains all your skills source code. The `.skill` files are packaged distributions. Everything else is documentation and tooling to help users and contributors.

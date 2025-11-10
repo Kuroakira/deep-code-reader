@@ -14,18 +14,19 @@ Deep Code Reader helps you understand unfamiliar codebases by:
 ## 📁 Repository Structure
 
 ```
-deep-code-reader/
-├── SKILL.md                              # Main skill instructions for Claude
-├── scripts/                              # Standalone analysis scripts
-│   ├── generate_architecture_diagram.py  # Create architecture diagrams
-│   ├── analyze_data_flow.py             # Trace data through the system
-│   ├── analyze_dependencies.py          # Map dependencies
-│   └── fetch_pr_context.py              # Get GitHub PR context
-├── references/                           # Reference documentation
-│   ├── code-reading-methodology.md      # Effective code reading strategies
-│   └── architecture-patterns.md         # Common architecture patterns
-└── assets/                               # Templates and resources
-    └── architecture-template.drawio     # draw.io diagram template
+skills/
+└── deep-code-reader/
+    ├── SKILL.md                              # Main skill instructions for Claude
+    ├── scripts/                              # Standalone analysis scripts
+    │   ├── generate_architecture_diagram.py  # Create architecture diagrams
+    │   ├── analyze_data_flow.py             # Trace data through the system
+    │   ├── analyze_dependencies.py          # Map dependencies
+    │   └── fetch_pr_context.py              # Get GitHub PR context
+    ├── references/                           # Reference documentation
+    │   ├── code-reading-methodology.md      # Effective code reading strategies
+    │   └── architecture-patterns.md         # Common architecture patterns
+    └── assets/                               # Templates and resources
+        └── architecture-template.drawio     # draw.io diagram template
 ```
 
 ## 🚀 Installation
@@ -35,7 +36,7 @@ deep-code-reader/
 The Claude desktop app supports Skills through its built-in Skills interface:
 
 1. **Download the packaged skill file**:
-   - Download `deep-code-reader.skill` from [Releases](../../releases)
+   - Download `deep-code-reader.skill` from [Releases](https://github.com/Kuroakira/claude_skills/releases)
 
 2. **Install via Skills interface**:
    - Open Claude Desktop App
@@ -71,7 +72,7 @@ git clone https://github.com/Kuroakira/claude_skills.git
 
 # Copy the skill directory to Claude's skills location
 mkdir -p ~/.claude/skills
-cp -r claude_skills/deep-code-reader ~/.claude/skills/deep-code-reader
+cp -r claude_skills/skills/deep-code-reader ~/.claude/skills/deep-code-reader
 
 # Verify installation
 ls ~/.claude/skills/deep-code-reader
