@@ -376,11 +376,6 @@ EOF
     echo "  ✓ Serena - Semantic code understanding"
     echo "  ✓ Playwright - Browser automation"
     echo ""
-    echo -e "${BLUE}Claude Code Built-in Features:${NC}"
-    echo "  ✓ Sequential Thinking - Multi-step reasoning"
-    echo "  ✓ IDE Integration - Editor access"
-    echo "  ${YELLOW}(No installation or configuration needed)${NC}"
-    echo ""
 }
 
 # ============================================================
