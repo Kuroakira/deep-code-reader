@@ -63,12 +63,8 @@ check_dependencies() {
 check_mcp_installed() {
     local package=$1
 
-    # Check if globally installed
-    if npm list -g "$package" &>/dev/null; then
-        return 0  # Already installed
-    fi
-
-    # Check if configured in ~/.claude.json (for npx-based servers)
+    # Only check if configured in ~/.claude.json
+    # We don't care if it's globally installed, we need the config
     if [ -f "$HOME/.claude.json" ]; then
         # Extract server name from package (e.g., @notionhq/notion-mcp-server -> notion)
         local server_name
@@ -87,7 +83,7 @@ check_mcp_installed() {
         fi
     fi
 
-    return 1  # Not installed
+    return 1  # Not configured
 }
 
 install_mcp_servers() {
