@@ -62,9 +62,15 @@ check_dependencies() {
 
 check_mcp_installed() {
     local package=$1
+    local globally_installed=false
+    local configured=false
 
-    # Only check if configured in ~/.claude.json
-    # We don't care if it's globally installed, we need the config
+    # Check if globally installed
+    if npm list -g "$package" &>/dev/null; then
+        globally_installed=true
+    fi
+
+    # Check if configured in ~/.claude.json
     if [ -f "$HOME/.claude.json" ]; then
         # Extract server name from package (e.g., @notionhq/notion-mcp-server -> notion)
         local server_name
@@ -78,7 +84,38 @@ check_mcp_installed() {
 
         if [ -n "$server_name" ]; then
             if python3 -c "import json, sys; config=json.load(open('$HOME/.claude.json')); sys.exit(0 if '$server_name' in config.get('mcpServers', {}) else 1)" 2>/dev/null; then
-                return 0  # Already configured
+                configured=true
+            fi
+        fi
+    fi
+
+    # Both globally installed AND configured = fully installed
+    if [ "$globally_installed" = true ] && [ "$configured" = true ]; then
+        return 0  # Fully installed
+    fi
+
+    # Either missing = needs installation/configuration
+    return 1
+}
+
+check_mcp_configured() {
+    local package=$1
+
+    # Only check if configured in ~/.claude.json
+    if [ -f "$HOME/.claude.json" ]; then
+        # Extract server name from package
+        local server_name
+        if [[ "$package" == *"notion"* ]]; then
+            server_name="notion"
+        elif [[ "$package" == *"github"* ]]; then
+            server_name="github"
+        elif [[ "$package" == *"brave"* ]]; then
+            server_name="brave-search"
+        fi
+
+        if [ -n "$server_name" ]; then
+            if python3 -c "import json, sys; config=json.load(open('$HOME/.claude.json')); sys.exit(0 if '$server_name' in config.get('mcpServers', {}) else 1)" 2>/dev/null; then
+                return 0  # Configured
             fi
         fi
     fi
@@ -178,12 +215,36 @@ install_mcp_servers() {
         echo ""
     fi
 
+    # Check if any servers need configuration (globally installed but not configured)
+    local needs_config=()
+    for server_info in "${required_servers[@]}"; do
+        IFS=':' read -r package name type <<< "$server_info"
+
+        # If globally installed but not configured
+        if npm list -g "$package" &>/dev/null; then
+            if ! check_mcp_configured "$package"; then
+                needs_config+=("$package:$name")
+            fi
+        fi
+    done
+
     # Summary
     if [ ${#already_installed[@]} -gt 0 ]; then
         echo -e "${GREEN}✓ Already installed (${#already_installed[@]}):${NC}"
         for name in "${already_installed[@]}"; do
             echo "  - $name"
         done
+        echo ""
+    fi
+
+    if [ ${#needs_config[@]} -gt 0 ]; then
+        echo -e "${YELLOW}⚠ Servers need configuration:${NC}"
+        for server_info in "${needs_config[@]}"; do
+            IFS=':' read -r package name <<< "$server_info"
+            echo "  - $name (globally installed but not configured)"
+        done
+        echo ""
+        echo "These will be configured in the Notion setup step."
         echo ""
     fi
 
