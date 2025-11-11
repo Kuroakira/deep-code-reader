@@ -45,7 +45,7 @@ Guide user to create integration:
 ```markdown
 📝 Step 1: Create Notion Integration
 
-1. Visit: https://www.notion.so/my-integrations
+1. Visit: https://www.notion.so/profile/integrations
 2. Click "New integration"
 3. Name: "Deep Code Reader" (or your choice)
 4. Select workspace
@@ -270,7 +270,7 @@ After successful setup:
 The API key should:
   • Start with "secret_"
   • Be about 50 characters long
-  • Come from https://www.notion.so/my-integrations
+  • Come from https://www.notion.so/profile/integrations
 
 Please try again with a valid key.
 ```
@@ -395,7 +395,7 @@ To reconfigure: /setup-notion --reset
 ✓ You can regenerate token anytime
 
 ⚠️  If token is compromised:
-  1. Visit: https://www.notion.so/my-integrations
+  1. Visit: https://www.notion.so/profile/integrations
   2. Select "Deep Code Reader"
   3. Click "Regenerate token"
   4. Run: /setup-notion --update-token
