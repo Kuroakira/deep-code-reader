@@ -438,7 +438,6 @@ setup_notion() {
   "api_key": "$NOTION_KEY",
   "workspace_page_id": "",
   "oss_database_id": "",
-  "commits_database_id": "",
   "auto_export": false,
   "setup_complete": false
 }
@@ -499,7 +498,6 @@ EOF
   "api_key": "",
   "workspace_page_id": "",
   "oss_database_id": "",
-  "commits_database_id": "",
   "auto_export": false,
   "setup_complete": false
 }

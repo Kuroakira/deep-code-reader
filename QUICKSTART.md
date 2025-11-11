@@ -68,11 +68,10 @@ claude-code
    - Enter the URL of the page you granted access to
    - (The page you selected in integration settings)
 
-3. **Auto-create Databases** ✨
-   - Creates "OSSリスト" database
-   - Creates "Commit & PRリスト" database
-   - Configures relation between them
-   - Shares them with your integration
+3. **Auto-create OSSリスト Database** ✨
+   - Creates master "OSSリスト" database
+   - Individual "Commits & PRs" databases created per OSS
+   - Shares database with your integration
 
 4. **Done!**
    ```
@@ -81,9 +80,9 @@ claude-code
    📋 Configuration:
      • Workspace: Code Analysis Workspace
      • OSSリスト: https://notion.so/...
-     • Commit & PRリスト: https://notion.so/...
 
    🚀 Next: /register-oss <github-url>
+     (This creates an OSS-specific Commits & PRs database)
    ```
 
 ---

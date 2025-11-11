@@ -271,10 +271,20 @@ if not oss_pages:
 oss_page_id = oss_pages[0]["id"]
 ```
 
-#### 5.2 Create Commit Entry
+#### 5.2 Get Commits Database ID from Memory
 
 ```python
-# Create page in Commit & PRリスト database
+# Get OSS-specific commits database ID from current_oss memory
+current_oss = serena_mcp.read_memory("current_oss")
+commits_database_id = current_oss["commits_database_id"]
+```
+
+**Important**: Each OSS has its own Commits & PRs database. The database ID is stored in Serena memory when the OSS is registered.
+
+#### 5.3 Create Commit Entry
+
+```python
+# Create page in OSS-specific Commits & PRs database
 commit_page = notion_mcp.create_page(
     parent={"database_id": commits_database_id},
     properties={
@@ -284,7 +294,6 @@ commit_page = notion_mcp.create_page(
         "Created Date": commit_date,
         "GitHub URL": f"{repo_url}/commit/{commit_hash}",
         "Memo": "",  # Empty for user to fill
-        "OSS": {"relation": [{"id": oss_page_id}]}
     },
     children=[
         # ... all content blocks from template
@@ -292,7 +301,9 @@ commit_page = notion_mcp.create_page(
 )
 ```
 
-#### 5.3 Confirm Export
+**Note**: No OSS relation property needed since each database is OSS-specific.
+
+#### 5.4 Confirm Export
 
 ```markdown
 ✅ Exported to Notion!

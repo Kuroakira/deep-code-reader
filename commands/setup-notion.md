@@ -134,17 +134,17 @@ Extract page ID from URL:
 
 **Note**: The new method (via Integration settings) is much simpler than the old "Share button" method.
 
-### Step 4: Create Databases Automatically
+### Step 4: Create OSSリスト Database
 
-Use Notion MCP to create databases:
+Use Notion MCP to create the master OSS database:
 
 ```markdown
-🔨 Step 3: Creating Databases
+🔨 Step 3: Creating OSSリスト Database
 
-Creating databases in your workspace...
+Creating master database for OSS repositories...
 ```
 
-**Database 1: OSSリスト** (Parent Database)
+**OSSリスト Database** (Master Database)
 
 Use Notion MCP `create_database` with:
 ```json
@@ -176,68 +176,24 @@ Use Notion MCP `create_database` with:
     "Stars": {
       "number": {}
     },
-    "Created": {
-      "created_time": {}
-    }
-  }
-}
-```
-
-**Database 2: Commit & PRリスト** (Child Database)
-
-Use Notion MCP `create_database` with:
-```json
-{
-  "parent_page_id": "<workspace_page_id>",
-  "title": "Commit & PRリスト",
-  "properties": {
-    "Title": {
-      "title": {}
-    },
-    "Type": {
-      "select": {
-        "options": [
-          {"name": "Commit", "color": "blue"},
-          {"name": "PR", "color": "green"}
-        ]
-      }
-    },
-    "Commit ID / PR No": {
-      "rich_text": {}
-    },
-    "GitHub URL": {
+    "Commits DB": {
       "url": {}
     },
-    "Comment": {
-      "rich_text": {}
-    },
-    "OSS": {
-      "relation": {
-        "database_id": "<oss_database_id>",
-        "type": "dual_property",
-        "dual_property": {
-          "synced_property_name": "Commits & PRs"
-        }
-      }
-    },
     "Created": {
       "created_time": {}
-    },
-    "Analyzed Date": {
-      "date": {}
-    },
-    "Memo": {
-      "rich_text": {}
     }
   }
 }
 ```
+
+**Note**: Individual "Commits & PRs" databases will be created automatically when you register each OSS repository using `/register-oss`.
 
 Show progress:
 ```markdown
   ✓ Created "OSSリスト" database
-  ✓ Created "Commit & PRリスト" database
-  ✓ Configured database relation
+
+💡 Next: Run /register-oss to add OSS repositories
+   Each OSS will get its own "Commits & PRs" database
 ```
 
 ### Step 5: Save Configuration
@@ -249,11 +205,12 @@ Save complete configuration:
   "api_key": "secret_xxxxxxxxxxxxx",
   "workspace_page_id": "abc123...",
   "oss_database_id": "def456...",
-  "commits_database_id": "ghi789...",
   "auto_export": true,
   "setup_complete": true
 }
 ```
+
+**Note**: `commits_database_id` is no longer stored globally. Each OSS repository will have its own commits database, referenced in the OSSリスト entries.
 
 Write to `~/.claude/deep-code-reader/notion_config.json`.
 
@@ -268,8 +225,6 @@ Testing Notion connection...
   ✓ API key valid
   ✓ Workspace page accessible
   ✓ OSSリスト database accessible
-  ✓ Commit & PRリスト database accessible
-  ✓ Database relation working
 
 ✅ Notion Integration Complete!
 ```
@@ -286,23 +241,23 @@ After successful setup:
 📋 Configuration Details:
   • Workspace: [page_name]
   • OSSリスト: https://notion.so/workspace/[oss_db_id]
-  • Commit & PRリスト: https://notion.so/workspace/[commits_db_id]
   • Auto-export: Enabled
 
 🚀 Next Steps:
   1. Register an OSS repository:
      /register-oss https://github.com/user/repo
+     (This will create a Commits & PRs database for that OSS)
 
   2. Analyze commits:
      /analyze-commit abc1234
 
   3. View results in Notion:
-     [Database URL]
+     Check the "Commits DB" link in OSSリスト
 
 💡 Tips:
-  • Results automatically export to Notion
+  • Each OSS gets its own Commits & PRs database
+  • Results automatically export to the correct database
   • Use /current-oss to check active project
-  • Databases are already shared with integration
 ```
 
 ## Error Handling

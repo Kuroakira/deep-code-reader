@@ -102,9 +102,10 @@ claude-code
 
 The wizard will:
 1. **Ask for workspace page URL** - Enter the page you granted access to
-2. **Auto-create databases** - OSSリスト and Commit & PRリスト created automatically
-3. **Configure relations** - Database links set up
-4. **Done!** - Start analyzing
+2. **Auto-create OSSリスト database** - Master database for all repositories
+3. **Done!** - Ready to register OSS repositories
+
+**Note**: Individual "Commits & PRs" databases are created automatically when you register each OSS with `/register-oss`
 
 **If you skipped during installation:**
 ```bash

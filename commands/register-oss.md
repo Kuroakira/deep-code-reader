@@ -49,13 +49,45 @@ Get repository information:
 repo_info = github_mcp.get_repository(owner, repo_name)
 ```
 
-### Step 4: Create Notion Page
+### Step 4: Create Commits & PRs Database for this OSS
+
+Create a dedicated database for this OSS repository's commits and PRs:
+
+Use Notion MCP `create_database`:
+```json
+{
+  "parent_page_id": "<workspace_page_id>",
+  "title": "{OSS Name} - Commits & PRs",
+  "properties": {
+    "Title": {"title": {}},
+    "Type": {
+      "select": {
+        "options": [
+          {"name": "Commit", "color": "blue"},
+          {"name": "PR", "color": "green"}
+        ]
+      }
+    },
+    "Commit ID / PR No": {"rich_text": {}},
+    "GitHub URL": {"url": {}},
+    "Comment": {"rich_text": {}},
+    "Created": {"created_time": {}},
+    "Analyzed Date": {"date": {}},
+    "Memo": {"rich_text": {}}
+  }
+}
+```
+
+Save the database ID and URL for later use.
+
+### Step 5: Create Notion Page in OSSリスト
 
 Create entry in "OSSリスト" database:
 
 **Properties**:
 - **Name** (title): Project name (e.g., "Express.js")
 - **GitHub URL** (url): Repository URL
+- **Commits DB** (url): URL to the Commits & PRs database created in Step 4
 
 **Content** (optional):
 ```markdown
@@ -73,17 +105,19 @@ Create entry in "OSSリスト" database:
 - Status: Ready for analysis
 ```
 
-### Step 5: Save to Memory (use Serena MCP)
+### Step 6: Save to Memory (use Serena MCP)
 
-Save current OSS project to memory for easy access:
+Save current OSS project information to memory, including the commits database ID:
 
 ```python
-# Save current OSS context
+# Save current OSS context including commits database info
 serena_mcp.write_memory("current_oss", {
     "repo_url": repo_url,
     "owner": owner,
     "repo": repo_name,
     "notion_page_id": notion_page_id,
+    "commits_database_id": commits_db_id,  # NEW: OSS-specific commits DB
+    "commits_database_url": commits_db_url,  # NEW: For easy access
     "registered_at": current_timestamp
 })
 ```
@@ -92,7 +126,7 @@ This allows users to omit URLs in subsequent commands:
 - `/analyze-commit <hash>` instead of `/analyze-commit <url> <hash>`
 - `/analyze-pr <number>` instead of `/analyze-pr <url>/pull/<number>`
 
-### Step 6: Confirm Success
+### Step 7: Confirm Success
 
 Return to user:
 ```markdown
@@ -100,11 +134,13 @@ Return to user:
 
 📦 Project: Express.js
 🔗 GitHub: https://github.com/expressjs/express
-📄 Notion: https://notion.so/your-oss-page-id
+📄 Notion Page: https://notion.so/your-oss-page-id
+💾 Commits DB: https://notion.so/your-commits-db-id
 
 💡 Next steps:
 - Check current project: /current-oss
 - Analyze commits: /analyze-commit <commit-hash>  ⬅️ URL not needed!
+- Commits will be saved to the dedicated "Express.js - Commits & PRs" database
 - Analyze PR: /analyze-pr <pr-number>
 - View in Notion: [link]
 ```
