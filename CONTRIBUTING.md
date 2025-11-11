@@ -25,8 +25,8 @@ We welcome contributions that:
 
 1. **Fork and clone the repository**
    ```bash
-   git clone https://github.com/Kuroakira/claude_skills.git
-   cd claude_skills
+   git clone https://github.com/Kuroakira/deep-code-reader.git
+   cd deep-code-reader
    ```
 
 2. **Create a branch for your changes**

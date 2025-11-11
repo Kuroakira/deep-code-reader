@@ -5,7 +5,7 @@ This document explains the structure of the Deep Code Reader skill repository.
 ## 📁 Top-Level Structure
 
 ```
-claude_skills/
+deep-code-reader/
 ├── skills/                    # All Claude Skills
 │   └── deep-code-reader/     # The actual skill (this is what gets packaged)
 │       ├── SKILL.md          # Main skill instructions for Claude
@@ -167,8 +167,8 @@ Users upload to: Claude.ai Settings → Skills
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/Kuroakira/claude_skills.git
-   cd claude_skills
+   git clone https://github.com/Kuroakira/deep-code-reader.git
+   cd deep-code-reader
    ```
 
 2. **Make changes** in the `skills/deep-code-reader/` directory

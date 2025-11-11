@@ -7,8 +7,8 @@ This guide will help you start analyzing OSS commits in 5 minutes.
 ### Step 1: Clone Repository
 
 ```bash
-git clone https://github.com/Kuroakira/claude_skills.git
-cd claude_skills
+git clone https://github.com/Kuroakira/deep-code-reader.git
+cd deep-code-reader
 ```
 
 ### Step 2: Run Installer
@@ -271,7 +271,7 @@ Try again in: 5 minutes
 
 - **Documentation**: See README.md for full details
 - **Commands**: All commands have detailed .md files in `commands/`
-- **Issues**: Report problems at https://github.com/Kuroakira/claude_skills/issues
+- **Issues**: Report problems at https://github.com/Kuroakira/deep-code-reader/issues
 
 ---
 

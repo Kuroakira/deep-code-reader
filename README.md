@@ -36,8 +36,8 @@ Perfect for developers who want to:
 
 ```bash
 # Clone the repository
-git clone https://github.com/Kuroakira/claude_skills.git
-cd claude_skills
+git clone https://github.com/Kuroakira/deep-code-reader.git
+cd deep-code-reader
 
 # Run the installer
 ./install.sh
@@ -79,7 +79,7 @@ claude-code
 ## 📁 Project Structure
 
 ```
-claude_skills/
+deep-code-reader/
 ├── install.sh                    # One-command installer
 ├── commands/                     # Slash commands
 │   ├── register-oss.md          # Register OSS repository
@@ -317,9 +317,9 @@ Inspired by the need for better tools to understand and contribute to open sourc
 
 ## 🔗 Links
 
-- **GitHub Repository**: https://github.com/Kuroakira/claude_skills
-- **Issues & Feedback**: https://github.com/Kuroakira/claude_skills/issues
-- **Discussions**: https://github.com/Kuroakira/claude_skills/discussions
+- **GitHub Repository**: https://github.com/Kuroakira/deep-code-reader
+- **Issues & Feedback**: https://github.com/Kuroakira/deep-code-reader/issues
+- **Discussions**: https://github.com/Kuroakira/deep-code-reader/discussions
 - **Anthropic Skills**: https://docs.anthropic.com/en/docs/build-with-claude/skills
 - **MCP Documentation**: https://modelcontextprotocol.io/
 
