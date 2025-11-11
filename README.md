@@ -45,10 +45,15 @@ cd deep-code-reader
 
 The installer will:
 1. ✅ Check dependencies (Node.js, Python, npm)
-2. 📦 Install MCP servers (GitHub, Brave Search, Notion)
+2. 📦 Install MCP servers (auto-detects existing installations)
+   - Required: GitHub, Brave Search, Notion
+   - Optional: Additional MCP servers (interactive selection)
 3. ⚙️  Configure Claude Code
 4. 🎯 Install skills and commands
-5. 🔐 Set up Notion integration (optional)
+5. 🔐 Set up Notion integration
+   - Enter Notion API key during installation
+   - MCP configurations automatically updated
+   - Database creation wizard available after installation
 
 ### Uninstallation
 
@@ -62,16 +67,58 @@ The uninstaller will:
 - 🔍 Scan for installed components
 - 📋 Show what will be removed
 - ⚠️  Ask for confirmation
+- 🎯 Let you choose which MCP servers to remove
 - 🔄 Offer to restore config backups
 - 💾 Preserve your Notion configuration (optional)
 - 🗑️  Clean up all files
 
-### First Analysis (30 seconds)
+### Setup Notion (During Installation)
+
+**During `./install.sh`:**
+
+When prompted "Setup Notion integration now? (y/n)":
+1. **Say yes** if you want Notion integration
+2. **Get API key** - Visit https://www.notion.so/profile/integrations
+   - Create integration named "Deep Code Reader"
+   - Copy the Internal Integration Secret
+3. **Paste API key** - Installer automatically configures MCPs
+4. **Grant access** - Go to integration settings:
+   - Visit https://www.notion.so/profile/integrations
+   - Click on your integration
+   - Click "アクセス" (Access) tab
+   - Click "アクセス権限を編集"
+   - Select a workspace page
+5. **Done!** - Notion MCP ready to use
+
+**After Installation:**
 
 ```bash
 # Start Claude Code
 claude-code
 
+# Complete Notion setup
+/setup-notion
+```
+
+The wizard will:
+1. **Ask for workspace page URL** - Enter the page you granted access to
+2. **Auto-create databases** - OSSリスト and Commit & PRリスト created automatically
+3. **Configure relations** - Database links set up
+4. **Done!** - Start analyzing
+
+**If you skipped during installation:**
+```bash
+# Get API key from Notion
+# Run update script
+python3 ~/.claude/deep-code-reader/scripts/update_notion_mcp.py <api_key>
+
+# Restart Claude Code
+# Then run /setup-notion
+```
+
+### First Analysis (30 seconds)
+
+```bash
 # Step 1: Register OSS repository (one time only)
 /register-oss https://github.com/expressjs/express
 
@@ -176,7 +223,7 @@ deep-code-reader/
 # Configure Notion integration (first time only)
 /setup-notion
 
-# Or manually edit: config/notion_config.json
+# Or manually edit: ~/.claude/deep-code-reader/notion_config.json
 ```
 
 ## 💡 What You Get

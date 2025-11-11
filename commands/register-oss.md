@@ -172,14 +172,42 @@ This repository was registered on: 2025-01-10
 ### Notion Not Configured
 
 ```
-❌ Error: Notion not configured
+⚠️  Notion Integration Not Set Up
 
-Please configure Notion integration first:
+This command requires Notion integration to store repository data.
+
+Quick Setup:
   1. Run: /setup-notion
-  2. Provide API key and database IDs
-  3. Retry registration
+  2. The wizard will:
+     • Guide you through creating Notion integration
+     • Help you share a workspace page
+     • Automatically create OSSリスト database
+     • Automatically create Commit & PRリスト database
+     • Configure everything for you
 
-Current config: config/notion_config.json
+  3. Come back and run this command again
+
+Alternatively, you can:
+  • Skip Notion integration (analyze without saving to Notion)
+  • Set up manually (see: commands/setup-notion.md)
+
+Would you like to continue without Notion? (y/n)
+```
+
+If user chooses to continue without Notion:
+```
+✅ Repository Info Saved to Memory (Local Only)
+
+📦 Project: Express.js
+🔗 GitHub: https://github.com/expressjs/express
+💾 Saved as current project
+
+⚠️  Note: Results won't be saved to Notion
+   Run /setup-notion to enable Notion integration
+
+You can still analyze:
+  /analyze-commit abc1234
+  /analyze-pr 5234
 ```
 
 ### Notion Database Not Found
@@ -198,7 +226,7 @@ Steps to fix:
 1. Open Notion database
 2. Click "Share" → Invite integration
 3. Verify database ID in URL
-4. Update: config/notion_config.json
+4. Update: ~/.claude/deep-code-reader/notion_config.json
 ```
 
 ## Output Format

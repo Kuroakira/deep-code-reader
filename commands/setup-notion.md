@@ -1,224 +1,447 @@
 ---
 name: setup-notion
-description: Configure Notion integration for automated analysis export
+description: Configure Notion integration with automatic database creation
 ---
 
-# Notion Integration Setup
+# Notion Integration Setup Wizard
 
-Guide the user through setting up Notion integration for automated code analysis export.
+This command guides you through setting up Notion integration with automatic database creation.
 
-## Setup Steps
+## Overview
 
-### Step 1: Create Notion Integration
+The setup process:
+1. **Get Notion API Key** - Create integration and get token
+2. **Share Workspace Page** - Share a Notion page with your integration
+3. **Auto-create Databases** - Automatically create OSSリスト and Commit & PRリスト databases
+4. **Configure Platform** - Save configuration for automated export
 
-1. Guide user to Notion integrations page:
-   ```
-   Visit: https://www.notion.so/my-integrations
-   ```
+## Setup Flow
 
-2. Walk through integration creation:
-   ```
-   1. Click "New integration"
-   2. Name: "OSS Learning Platform" (or user's choice)
-   3. Associated workspace: [Select workspace]
-   4. Capabilities:
-      ✓ Read content
-      ✓ Update content
-      ✓ Insert content
-   5. Click "Submit"
-   ```
+### Step 1: Check Existing Configuration
 
-3. Copy integration token:
-   ```
-   📋 Copy "Internal Integration Token"
-   (Starts with "secret_")
-   ```
+First, check if configuration already exists:
 
-### Step 2: Create Analysis Database
+```javascript
+const fs = require('fs');
+const path = require('path');
+const configPath = path.join(require('os').homedir(), '.claude/deep-code-reader/notion_config.json');
 
-1. Guide database creation:
-   ```
-   1. Open Notion
-   2. Create new page: "Code Analyses" (or user's choice)
-   3. Type: /database → "Table - Inline"
-   4. Add properties:
-      - Repository (URL)
-      - Commit (Text)
-      - Analysis Date (Date)
-      - Status (Select: Completed, In Progress, Failed)
-      - Architecture Pattern (Multi-select)
-   ```
+if (fs.existsSync(configPath)) {
+  const config = JSON.parse(fs.readFileSync(configPath));
 
-2. Share database with integration:
-   ```
-   1. Click "Share" in top-right
-   2. Click "Invite"
-   3. Search for integration name: "OSS Learning Platform"
-   4. Click "Invite"
-   ```
-
-3. Get database ID:
-   ```
-   1. Open database as full page
-   2. Copy URL: https://notion.so/workspace/DATABASE_ID?v=...
-   3. Extract DATABASE_ID (32-character string)
-   ```
-
-### Step 3: Configure Platform
-
-Save configuration to file:
-
-```json
-{
-  "api_key": "secret_xxxxxxxxxxxxxxxxxxxxx",
-  "database_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-  "auto_export": true,
-  "page_template": "analysis"
+  if (config.setup_complete) {
+    // Ask if user wants to reconfigure
+    console.log('⚠️  Notion is already configured.');
+    console.log('Do you want to reconfigure? (y/n)');
+    // If no, exit
+  }
 }
 ```
 
-Write this to: `config/notion_config.json`
+### Step 2: Get Notion API Key
 
-### Step 4: Verify Setup
+Guide user to create integration:
 
-Test the connection:
+```markdown
+📝 Step 1: Create Notion Integration
+
+1. Visit: https://www.notion.so/my-integrations
+2. Click "New integration"
+3. Name: "Deep Code Reader" (or your choice)
+4. Select workspace
+5. Capabilities needed:
+   ✓ Read content
+   ✓ Update content
+   ✓ Insert content
+6. Click "Submit"
+7. Copy the "Internal Integration Token"
+
+Please enter your Notion API Key:
+(Should start with "secret_")
+```
+
+Validate the API key:
+- Must start with "secret_" or "ntn_"
+- Should be around 50 characters
+- Save to config and update Claude Code configuration
+
+**IMPORTANT: Update Claude Configuration**
+
+After getting the API key, IMMEDIATELY run this script to update both Claude configurations:
 
 ```bash
-# Verify configuration file
-cat config/notion_config.json
-
-# Test Notion MCP connection
-# (This will be tested when you run /analyze-oss)
+python3 ~/.claude/deep-code-reader/scripts/update_notion_mcp.py "<notion_api_key>"
 ```
 
-## Interactive Setup
+This will update:
+1. **Claude Desktop**: `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `~/.config/Claude/claude_desktop_config.json` (Linux)
+2. **Claude Code CLI**: `~/.claude/.mcp.json`
 
-Ask the user for each piece of information step by step:
+Both configurations will have `NOTION_API_KEY` set in the Notion MCP server environment variables.
 
-1. **Integration Token**:
-   ```
-   🔑 Notion Integration Token
-
-   Please enter your Notion integration token:
-   (Starts with "secret_")
-
-   > _
-   ```
-
-2. **Database ID**:
-   ```
-   📋 Notion Database ID
-
-   Please enter your database ID:
-   (32-character string from URL)
-
-   > _
-   ```
-
-3. **Auto-export preference**:
-   ```
-   ⚙️  Auto-export Setting
-
-   Automatically export to Notion after analysis? (yes/no)
-
-   > _
-   ```
-
-4. **Confirmation**:
-   ```
-   ✅ Configuration Summary:
-
-   - Integration: Connected
-   - Database: [database_id]
-   - Auto-export: [enabled/disabled]
-
-   Save this configuration? (yes/no)
-
-   > _
-   ```
-
-## Troubleshooting
-
-### Invalid Token
+**Expected output:**
 ```
-❌ Error: Invalid Notion token
+Updating Notion API key in Claude configurations...
 
-The token should:
-- Start with "secret_"
-- Be about 50 characters long
-- Come from https://www.notion.so/my-integrations
+✓ Updated: /Users/.../Claude/claude_desktop_config.json
+✓ Updated: /Users/.../.claude/.mcp.json
 
-Please verify and try again.
+✅ Successfully updated 2 configuration(s)
+
+⚠️  IMPORTANT: Restart Claude Code for changes to take effect
 ```
 
-### Database Not Found
+**CRITICAL: Ask user to restart Claude Code**
+- This is REQUIRED for MCP changes to take effect
+- After restart, Notion MCP server will be available
+
+**Verification after restart:**
+- Use `listMcpResources` to check if "notion" server is listed
+- Try a simple Notion MCP operation to test connection
+- If not available, check logs and provide troubleshooting
+
+### Step 3: Grant Integration Access
+
+Guide user to grant access to a workspace page:
+
+```markdown
+📄 Step 2: Grant Integration Access to Workspace
+
+1. Go to: https://www.notion.so/profile/integrations
+
+2. Click on your integration (e.g., "MCP接続用" or "Deep Code Reader")
+
+3. Click the "アクセス" (Access) tab
+
+4. Click "アクセス権限を編集" (Edit access permissions)
+
+5. Select or create a workspace page:
+   - Choose existing page, or
+   - Create new page: "Code Analysis Workspace"
+
+6. Click "保存" (Save) to grant access
+
+7. Copy the page URL:
+
+Please enter the Notion page URL:
+(Example: https://notion.so/workspace/abc123...)
 ```
-❌ Error: Database not accessible
 
-Possible issues:
-1. Database ID is incorrect
-2. Integration not invited to database
-3. Database was deleted
+Extract page ID from URL:
+- Format: `https://notion.so/workspace/PAGE_ID?v=...`
+- Or: `https://notion.so/PAGE_ID`
+- Extract the 32-character ID
 
-Steps to fix:
-1. Verify database ID from URL
-2. Share database with integration:
-   - Open database
-   - Click "Share"
-   - Invite "OSS Learning Platform"
+**Note**: The new method (via Integration settings) is much simpler than the old "Share button" method.
+
+### Step 4: Create Databases Automatically
+
+Use Notion MCP to create databases:
+
+```markdown
+🔨 Step 3: Creating Databases
+
+Creating databases in your workspace...
 ```
 
-### Permission Denied
+**Database 1: OSSリスト** (Parent Database)
+
+Use Notion MCP `create_database` with:
+```json
+{
+  "parent_page_id": "<workspace_page_id>",
+  "title": "OSSリスト",
+  "properties": {
+    "Name": {
+      "title": {}
+    },
+    "GitHub URL": {
+      "url": {}
+    },
+    "Description": {
+      "rich_text": {}
+    },
+    "Language": {
+      "select": {
+        "options": [
+          {"name": "Python", "color": "blue"},
+          {"name": "JavaScript", "color": "yellow"},
+          {"name": "TypeScript", "color": "blue"},
+          {"name": "Go", "color": "green"},
+          {"name": "Rust", "color": "orange"},
+          {"name": "Other", "color": "gray"}
+        ]
+      }
+    },
+    "Stars": {
+      "number": {}
+    },
+    "Created": {
+      "created_time": {}
+    }
+  }
+}
 ```
-❌ Error: Insufficient permissions
 
-The integration needs these capabilities:
-✓ Read content
-✓ Update content
-✓ Insert content
+**Database 2: Commit & PRリスト** (Child Database)
 
-To fix:
-1. Go to: https://www.notion.so/my-integrations
-2. Select your integration
-3. Check all required capabilities
-4. Save changes
+Use Notion MCP `create_database` with:
+```json
+{
+  "parent_page_id": "<workspace_page_id>",
+  "title": "Commit & PRリスト",
+  "properties": {
+    "Title": {
+      "title": {}
+    },
+    "Type": {
+      "select": {
+        "options": [
+          {"name": "Commit", "color": "blue"},
+          {"name": "PR", "color": "green"}
+        ]
+      }
+    },
+    "Commit ID / PR No": {
+      "rich_text": {}
+    },
+    "GitHub URL": {
+      "url": {}
+    },
+    "Comment": {
+      "rich_text": {}
+    },
+    "OSS": {
+      "relation": {
+        "database_id": "<oss_database_id>",
+        "type": "dual_property",
+        "dual_property": {
+          "synced_property_name": "Commits & PRs"
+        }
+      }
+    },
+    "Created": {
+      "created_time": {}
+    },
+    "Analyzed Date": {
+      "date": {}
+    },
+    "Memo": {
+      "rich_text": {}
+    }
+  }
+}
 ```
 
-## Output Format
+Show progress:
+```markdown
+  ✓ Created "OSSリスト" database
+  ✓ Created "Commit & PRリスト" database
+  ✓ Configured database relation
+```
+
+### Step 5: Save Configuration
+
+Save complete configuration:
+
+```json
+{
+  "api_key": "secret_xxxxxxxxxxxxx",
+  "workspace_page_id": "abc123...",
+  "oss_database_id": "def456...",
+  "commits_database_id": "ghi789...",
+  "auto_export": true,
+  "setup_complete": true
+}
+```
+
+Write to `~/.claude/deep-code-reader/notion_config.json`.
+
+### Step 6: Verify Setup
+
+Test the configuration:
+
+```markdown
+🧪 Step 4: Verifying Setup
+
+Testing Notion connection...
+  ✓ API key valid
+  ✓ Workspace page accessible
+  ✓ OSSリスト database accessible
+  ✓ Commit & PRリスト database accessible
+  ✓ Database relation working
+
+✅ Notion Integration Complete!
+```
+
+## Success Output
 
 After successful setup:
 
 ```markdown
-✅ Notion Integration Configured!
+╔════════════════════════════════════════════╗
+║   Notion Integration Configured!          ║
+╚════════════════════════════════════════════╝
 
-📋 Configuration saved to: config/notion_config.json
+📋 Configuration Details:
+  • Workspace: [page_name]
+  • OSSリスト: https://notion.so/workspace/[oss_db_id]
+  • Commit & PRリスト: https://notion.so/workspace/[commits_db_id]
+  • Auto-export: Enabled
 
-🔗 Database: https://notion.so/workspace/[database_id]
+🚀 Next Steps:
+  1. Register an OSS repository:
+     /register-oss https://github.com/user/repo
 
-📝 Next steps:
-1. Run analysis: /analyze-oss <github-url>
-2. Results will automatically export to Notion
-3. View in database: [Notion database URL]
+  2. Analyze commits:
+     /analyze-commit abc1234
 
-💡 Tip: You can disable auto-export by setting
-    "auto_export": false in config/notion_config.json
+  3. View results in Notion:
+     [Database URL]
+
+💡 Tips:
+  • Results automatically export to Notion
+  • Use /current-oss to check active project
+  • Databases are already shared with integration
+```
+
+## Error Handling
+
+### Invalid API Key
+
+```markdown
+❌ Invalid Notion API Key
+
+The API key should:
+  • Start with "secret_"
+  • Be about 50 characters long
+  • Come from https://www.notion.so/my-integrations
+
+Please try again with a valid key.
+```
+
+### Page Not Accessible
+
+```markdown
+❌ Cannot Access Workspace Page
+
+Possible issues:
+  1. Page URL is incorrect
+  2. Integration not granted access to page
+  3. Page was deleted
+
+To fix:
+  1. Verify page URL
+  2. Grant integration access to page:
+     - Go to: https://www.notion.so/profile/integrations
+     - Click on your integration
+     - Click "アクセス" (Access) tab
+     - Click "アクセス権限を編集" (Edit access permissions)
+     - Select the page
+     - Click "保存" (Save)
+```
+
+### Database Creation Failed
+
+```markdown
+❌ Failed to Create Database
+
+Error: [error message]
+
+Troubleshooting:
+  1. Verify integration has required permissions:
+     ✓ Read content
+     ✓ Update content
+     ✓ Insert content
+
+  2. Check workspace page is shared with integration
+
+  3. Try again or create databases manually:
+     /setup-notion --manual
+```
+
+## Manual Setup Mode
+
+If automatic setup fails, provide manual instructions:
+
+```markdown
+📝 Manual Setup Instructions
+
+Follow these steps to set up manually:
+
+Step 1: Create OSSリスト Database
+  1. Open your workspace page
+  2. Type: /database
+  3. Select "Table - Inline"
+  4. Name: "OSSリスト"
+  5. Add properties:
+     - Name (title)
+     - GitHub URL (url)
+     - Description (text)
+     - Language (select)
+     - Stars (number)
+
+Step 2: Create Commit & PRリスト Database
+  1. On same page, add another database
+  2. Name: "Commit & PRリスト"
+  3. Add properties:
+     - Title (title)
+     - Type (select: Commit, PR)
+     - Commit ID / PR No (text)
+     - GitHub URL (url)
+     - Comment (text)
+     - OSS (relation to OSSリスト)
+     - Analyzed Date (date)
+     - Memo (text)
+
+Step 3: Grant Integration Access
+  1. Go to: https://www.notion.so/profile/integrations
+  2. Click on your integration
+  3. Click "アクセス" tab
+  4. Click "アクセス権限を編集"
+  5. Ensure the workspace page is selected (databases inherit access)
+
+Step 4: Get Database IDs
+  1. Open each database as full page
+  2. Copy ID from URL
+  3. Run: /setup-notion --manual-config
+
+I'll ask for the IDs to complete setup.
+```
+
+## Configuration Check Command
+
+Also support checking current configuration:
+
+```markdown
+/setup-notion --check
+
+Current Notion Configuration:
+  ✓ API Key: Configured
+  ✓ Workspace Page: [page_name]
+  ✓ OSSリスト Database: Connected
+  ✓ Commit & PRリスト Database: Connected
+  ✓ Auto-export: Enabled
+  ✓ Setup Complete: Yes
+
+Last verified: [timestamp]
+
+To reconfigure: /setup-notion --reset
 ```
 
 ## Security Notes
 
-Remind user about security:
+```markdown
+🔒 Security Reminders:
 
-```
-🔒 Security Reminder:
-
-- config/notion_config.json is gitignored
-- Never commit your Notion token
-- Keep your integration token secret
-- You can regenerate tokens at any time
+✓ Configuration saved to: ~/.claude/deep-code-reader/notion_config.json
+✓ File is in your home directory (not in project)
+✓ Never share your Notion API key
+✓ You can regenerate token anytime
 
 ⚠️  If token is compromised:
-1. Visit: https://www.notion.so/my-integrations
-2. Select integration
-3. Click "Regenerate token"
-4. Update config/notion_config.json
+  1. Visit: https://www.notion.so/my-integrations
+  2. Select "Deep Code Reader"
+  3. Click "Regenerate token"
+  4. Run: /setup-notion --update-token
 ```

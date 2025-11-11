@@ -19,38 +19,76 @@ cd deep-code-reader
 
 The installer will:
 1. ✅ Check dependencies (Node.js, Python, npm)
-2. 📦 Install MCP servers (GitHub, Brave Search, Notion)
+2. 📦 Install MCP servers (auto-detects existing installations)
+   - Skips already installed servers
+   - Offers optional MCP servers (interactive)
 3. ⚙️  Configure Claude Code
 4. 🎯 Install skills and commands
 5. 🔐 Set up Notion integration
 
-### Step 3: Configure Notion
+### Step 3: Setup Notion (Recommended)
 
-During installation, you'll be prompted:
+**During installation, say YES:**
 
+The installer will ask:
 ```
-Setup Notion now? (y/n)
+Setup Notion integration now? (y/n)
 ```
 
-**Say yes** and provide:
-1. **Notion API Key** - Get from https://www.notion.so/my-integrations
-2. **OSSリスト Database ID** - Create a database with:
-   - Name (title)
-   - GitHub URL (url)
-3. **Commit & PRリスト Database ID** - Create a database with:
-   - Title (title)
-   - Commit ID / PR No (text)
-   - Comment (text)
-   - Created Date (date)
-   - GitHub URL (url)
-   - Memo (text)
-   - OSS (relation to OSSリスト)
+Press **y** to set up now:
+1. Visit https://www.notion.so/profile/integrations
+2. Create integration "Deep Code Reader"
+3. Copy Internal Integration Secret
+4. Paste into installer
+5. Grant access to a workspace page:
+   - Go to integration settings
+   - Click "アクセス" (Access) tab
+   - Click "アクセス権限を編集"
+   - Select a workspace page
+6. Done! MCP configured automatically
 
-**Don't forget**: Share both databases with your integration!
+## Complete Notion Setup (1 minute)
+
+### After Installation
+
+If you configured API key during installation:
+
+```bash
+claude-code
+
+# Run the setup wizard
+/setup-notion
+```
+
+**The wizard will:**
+
+1. **Detect existing API key** - Already configured!
+
+2. **Ask for Workspace Page**
+   - Enter the URL of the page you granted access to
+   - (The page you selected in integration settings)
+
+3. **Auto-create Databases** ✨
+   - Creates "OSSリスト" database
+   - Creates "Commit & PRリスト" database
+   - Configures relation between them
+   - Shares them with your integration
+
+4. **Done!**
+   ```
+   ✅ Notion Integration Complete!
+
+   📋 Configuration:
+     • Workspace: Code Analysis Workspace
+     • OSSリスト: https://notion.so/...
+     • Commit & PRリスト: https://notion.so/...
+
+   🚀 Next: /register-oss <github-url>
+   ```
 
 ---
 
-## First Analysis (3 minutes)
+## First Analysis (1 minute)
 
 ### Step 1: Start Claude Code
 
@@ -216,7 +254,7 @@ Run: /setup-notion
 
 **Solution**:
 1. Run `/setup-notion` command
-2. Or manually edit `config/notion_config.json`
+2. Or manually edit `~/.claude/deep-code-reader/notion_config.json`
 
 ### "Commit not found"
 
@@ -279,6 +317,7 @@ If you need to remove the platform:
 - ✅ Scans for installed components
 - ✅ Shows what will be removed
 - ✅ Asks for confirmation before removing
+- ✅ Lets you choose which MCP servers to remove (interactive)
 - ✅ Offers to restore config backups
 - ✅ Preserves Notion config (optional)
 

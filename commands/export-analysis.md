@@ -57,7 +57,7 @@ Check if Notion is configured:
 import json
 from pathlib import Path
 
-config_file = Path("config/notion_config.json")
+config_file = Path.home() / ".claude/deep-code-reader/notion_config.json"
 
 if not config_file.exists():
     print("❌ Notion not configured. Run: /setup-notion")
@@ -191,7 +191,7 @@ Use: /export-analysis [file-path]
 Error: "Invalid database_id"
 
 Possible fixes:
-1. Verify database ID in config/notion_config.json
+1. Verify database ID in ~/.claude/deep-code-reader/notion_config.json
 2. Ensure database is shared with integration
 3. Run: /setup-notion to reconfigure
 

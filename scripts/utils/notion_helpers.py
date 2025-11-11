@@ -40,7 +40,7 @@ class NotionExporter:
         if not config.get("api_key") or config["api_key"] == "YOUR_NOTION_API_KEY":
             raise ValueError(
                 "Notion API key not configured. "
-                "Edit config/notion_config.json with your API key"
+                "Edit ~/.claude/deep-code-reader/notion_config.json with your API key"
             )
 
         return config

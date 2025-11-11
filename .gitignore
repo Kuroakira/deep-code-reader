@@ -63,6 +63,6 @@ node_modules/
 !config/default_*.json
 !config/*_template.json
 
-# User-specific configuration
+# User-specific configuration (kept for backwards compatibility - now uses ~/.claude/)
 config/notion_config.json
 config/user_settings.json

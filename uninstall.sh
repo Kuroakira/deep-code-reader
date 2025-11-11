@@ -132,42 +132,106 @@ remove_commands() {
     echo -e "${YELLOW}Removing Slash Commands...${NC}"
 
     if [ -d "$HOME/.claude/commands" ]; then
-        # Remove only deep-code-reader commands
-        find "$HOME/.claude/commands" -name "*.md" -path "*/deep-code-reader/*" -delete 2>/dev/null || true
+        # List of deep-code-reader commands
+        local dcr_commands=(
+            "analyze-commit.md"
+            "analyze-pr.md"
+            "current-oss.md"
+            "export-analysis.md"
+            "list-commits.md"
+            "list-prs.md"
+            "register-oss.md"
+            "setup-notion.md"
+        )
+
+        local removed_count=0
+        for cmd in "${dcr_commands[@]}"; do
+            if [ -f "$HOME/.claude/commands/$cmd" ]; then
+                rm "$HOME/.claude/commands/$cmd"
+                ((removed_count++))
+            fi
+        done
+
+        if [ $removed_count -gt 0 ]; then
+            echo -e "  ${GREEN}✓${NC} Removed $removed_count deep-code-reader commands"
+        else
+            echo -e "  ${BLUE}ℹ${NC} No deep-code-reader commands found"
+        fi
 
         # Count remaining commands
         local remaining=$(find "$HOME/.claude/commands" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
-
         if [ "$remaining" -eq 0 ]; then
             rm -rf "$HOME/.claude/commands"
-            echo -e "  ${GREEN}✓${NC} Removed all slash commands"
-        else
-            echo -e "  ${GREEN}✓${NC} Removed deep-code-reader commands ($remaining other commands remain)"
+            echo -e "  ${GREEN}✓${NC} Removed empty commands directory"
         fi
+    else
+        echo -e "  ${BLUE}ℹ${NC} No commands directory found"
     fi
 
     echo ""
 }
 
 remove_mcp_servers() {
-    echo -e "${YELLOW}Removing MCP Servers...${NC}"
+    echo -e "${YELLOW}MCP Server Removal...${NC}"
+    echo ""
+    echo -e "${BLUE}MCP servers may be used by other projects or workflows.${NC}"
+    echo "Select which MCP servers you want to remove:"
+    echo ""
 
     local servers=(
-        "@modelcontextprotocol/server-github"
-        "@modelcontextprotocol/server-brave-search"
-        "@notionhq/notion-mcp-server"
+        "@modelcontextprotocol/server-github:GitHub MCP"
+        "@modelcontextprotocol/server-brave-search:Brave Search MCP"
+        "@notionhq/notion-mcp-server:Notion MCP"
     )
 
-    for package in "${servers[@]}"; do
+    local to_remove=()
+    local found_count=0
+
+    # Show installed servers and ask for each
+    for server_info in "${servers[@]}"; do
+        IFS=':' read -r package name <<< "$server_info"
+
         if npm list -g "$package" &>/dev/null; then
-            echo -e "  Uninstalling ${BLUE}$package${NC}..."
-            if npm uninstall -g "$package" &>/dev/null; then
-                echo -e "  ${GREEN}✓${NC} Removed $package"
+            ((found_count++))
+            echo -e "  ${GREEN}✓${NC} ${name} is installed"
+            echo -e "    ${BLUE}Remove ${name}? (y/n)${NC}"
+            read -r remove_this
+
+            if [[ "$remove_this" =~ ^[Yy]$ ]]; then
+                to_remove+=("$package:$name")
+                echo -e "    ${YELLOW}→${NC} Marked for removal"
             else
-                echo -e "  ${RED}✗${NC} Failed to remove $package (may need sudo)"
+                echo -e "    ${GREEN}→${NC} Will keep installed"
             fi
+            echo ""
         fi
     done
+
+    if [ "$found_count" -eq 0 ]; then
+        echo -e "  ${BLUE}ℹ${NC} No MCP servers from this platform are installed"
+        echo ""
+        return
+    fi
+
+    # Remove selected servers
+    if [ ${#to_remove[@]} -gt 0 ]; then
+        echo ""
+        echo -e "${YELLOW}Removing ${#to_remove[@]} MCP server(s)...${NC}"
+        echo ""
+
+        for server_info in "${to_remove[@]}"; do
+            IFS=':' read -r package name <<< "$server_info"
+            echo -e "  Uninstalling ${BLUE}${name}${NC}..."
+
+            if npm uninstall -g "$package" &>/dev/null; then
+                echo -e "  ${GREEN}✓${NC} Removed $name"
+            else
+                echo -e "  ${RED}✗${NC} Failed to remove $name (may need sudo)"
+            fi
+        done
+    else
+        echo -e "${GREEN}✓ Keeping all MCP servers installed${NC}"
+    fi
 
     echo ""
 }
@@ -219,21 +283,35 @@ restore_claude_config() {
 }
 
 handle_notion_config() {
-    echo -e "${YELLOW}Handling Notion Config...${NC}"
+    echo -e "${YELLOW}Handling Deep Code Reader Data...${NC}"
 
+    # Check deep-code-reader directory
+    DEEP_CODE_READER_DIR="$HOME/.claude/deep-code-reader"
+    if [ -d "$DEEP_CODE_READER_DIR" ]; then
+        echo -e "  ${BLUE}Found deep-code-reader directory${NC}"
+        echo -e "  ${YELLOW}Contains: config, scripts, and cloned repositories${NC}"
+        echo -e "  ${BLUE}Remove entire deep-code-reader directory? (y/n)${NC}"
+        read -r remove_dcr
+
+        if [[ "$remove_dcr" =~ ^[Yy]$ ]]; then
+            rm -rf "$DEEP_CODE_READER_DIR"
+            echo -e "  ${GREEN}✓${NC} Removed ~/.claude/deep-code-reader/"
+        else
+            echo -e "  ${YELLOW}⚠${NC} Keeping deep-code-reader data"
+        fi
+    else
+        echo -e "  ${BLUE}ℹ${NC} No deep-code-reader directory found"
+    fi
+
+    # Also check old project-local config location (for backwards compatibility)
     if [ -f "$REPO_ROOT/config/notion_config.json" ]; then
-        if ! grep -q "YOUR_NOTION_API_KEY" "$REPO_ROOT/config/notion_config.json" 2>/dev/null; then
-            echo -e "  ${BLUE}Notion is configured with real credentials.${NC}"
-            echo -e "  ${BLUE}Remove Notion config? (y/n)${NC}"
-            echo -e "  ${YELLOW}Note: This contains your API key and database IDs${NC}"
-            read -r remove_notion
+        echo -e "  ${YELLOW}⚠${NC} Found old config at $REPO_ROOT/config/notion_config.json"
+        echo -e "  ${BLUE}Remove old config? (y/n)${NC}"
+        read -r remove_old
 
-            if [[ "$remove_notion" =~ ^[Yy]$ ]]; then
-                rm "$REPO_ROOT/config/notion_config.json"
-                echo -e "  ${GREEN}✓${NC} Removed Notion config"
-            else
-                echo -e "  ${YELLOW}⚠${NC} Keeping Notion config (you can use it later)"
-            fi
+        if [[ "$remove_old" =~ ^[Yy]$ ]]; then
+            rm "$REPO_ROOT/config/notion_config.json"
+            echo -e "  ${GREEN}✓${NC} Removed old Notion config"
         fi
     fi
 
@@ -254,10 +332,11 @@ main() {
     echo "This will remove:"
     echo "  • Claude Skills (deep-code-reader)"
     echo "  • Slash Commands"
-    echo "  • MCP Servers (globally installed npm packages)"
+    echo "  • MCP Servers (you'll choose which ones to remove)"
     echo "  • Claude Desktop Config (with option to restore from backup)"
     echo ""
     echo -e "${YELLOW}Your Notion data will NOT be affected.${NC}"
+    echo -e "${BLUE}You'll be asked to confirm removal of each MCP server.${NC}"
     echo ""
     echo -e "${RED}Are you sure you want to continue? (yes/no)${NC}"
     read -r confirm
