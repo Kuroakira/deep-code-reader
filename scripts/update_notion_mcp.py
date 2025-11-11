@@ -72,9 +72,10 @@ def update_notion_api_key(config_path, api_key):
         if is_cli_config and 'type' not in config['mcpServers']['notion']:
             config['mcpServers']['notion']['type'] = 'stdio'
 
-        if 'env' not in config['mcpServers']['notion']:
-            config['mcpServers']['notion']['env'] = {}
-        config['mcpServers']['notion']['env']['NOTION_TOKEN'] = api_key
+        # Replace env entirely to avoid old keys
+        config['mcpServers']['notion']['env'] = {
+            'NOTION_TOKEN': api_key
+        }
 
     # Write back
     with open(config_path, 'w') as f:
