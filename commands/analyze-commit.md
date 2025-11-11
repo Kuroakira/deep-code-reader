@@ -10,16 +10,48 @@ Perform comprehensive analysis of a single commit, understanding the **Why**, **
 ## Usage
 
 ```
-/analyze-commit <github-url> <commit-hash>
+/analyze-commit <commit-hash>
+/analyze-commit <github-url> <commit-hash>  # URL optional if project registered
 ```
 
 **Examples**:
 ```
+# After /register-oss - URL not needed!
+/analyze-commit abc1234567
+/analyze-commit abc1234  # Short hash OK
+
+# Or with explicit URL
 /analyze-commit https://github.com/expressjs/express abc1234567
-/analyze-commit https://github.com/express js/express abc1234  # Short hash OK
 ```
 
 ## Analysis Workflow
+
+### Phase 0: Repository URL Resolution
+
+Determine the repository URL to use:
+
+```python
+# If URL not provided, read from memory
+if not github_url:
+    current_oss = serena_mcp.read_memory("current_oss")
+
+    if not current_oss:
+        print("⚠️  No repository specified and no current project set")
+        print("Please either:")
+        print("  1. Register a project: /register-oss <github-url>")
+        print("  2. Or specify URL: /analyze-commit <github-url> <commit-hash>")
+        return
+
+    github_url = current_oss["repo_url"]
+    owner = current_oss["owner"]
+    repo = current_oss["repo"]
+    notion_oss_page_id = current_oss["notion_page_id"]
+
+    print(f"📦 Using current project: {owner}/{repo}")
+else:
+    # URL provided, parse it
+    owner, repo = parse_github_url(github_url)
+```
 
 ### Phase 1: Commit Data Gathering (use GitHub MCP)
 
@@ -272,6 +304,25 @@ commit_page = notion_mcp.create_page(
 ```
 
 ## Error Handling
+
+### Repository Not Set
+
+```
+⚠️  No Repository Specified
+
+You haven't specified a repository URL and no current project is set.
+
+Options:
+1. Register a project first:
+   /register-oss https://github.com/expressjs/express
+   /analyze-commit abc1234
+
+2. Or specify URL directly:
+   /analyze-commit https://github.com/expressjs/express abc1234
+
+Check current project:
+   /current-oss
+```
 
 ### Commit Not Found
 

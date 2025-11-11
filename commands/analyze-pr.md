@@ -10,17 +10,50 @@ Analyze all commits within a PR, understanding the collective changes and their 
 ## Usage
 
 ```
+/analyze-pr <pr-number>
 /analyze-pr <pr-url>
 /analyze-pr <github-url>/pull/<number>
 ```
 
 **Examples**:
 ```
+# After /register-oss - just PR number!
+/analyze-pr 5234
+
+# Or with full URL
 /analyze-pr https://github.com/expressjs/express/pull/5234
 /analyze-pr https://github.com/expressjs/express 5234
 ```
 
 ## Workflow
+
+### Step 0: Repository URL Resolution
+
+Determine the repository URL and PR number:
+
+```python
+# Parse input - could be just number, full URL, or URL + number
+if input_is_number_only(input):
+    # Just PR number provided, read from memory
+    pr_number = input
+    current_oss = serena_mcp.read_memory("current_oss")
+
+    if not current_oss:
+        print("⚠️  No repository set. Please:")
+        print("  1. Register: /register-oss <github-url>")
+        print("  2. Or specify full URL: /analyze-pr <pr-url>")
+        return
+
+    owner = current_oss["owner"]
+    repo = current_oss["repo"]
+    github_url = current_oss["repo_url"]
+    notion_oss_page_id = current_oss["notion_page_id"]
+
+    print(f"📦 Using current project: {owner}/{repo}")
+else:
+    # Full URL or URL + number provided
+    owner, repo, pr_number = parse_pr_url(input)
+```
 
 ### Step 1: PR Information Gathering
 

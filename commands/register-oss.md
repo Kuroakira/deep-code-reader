@@ -73,7 +73,26 @@ Create entry in "OSSリスト" database:
 - Status: Ready for analysis
 ```
 
-### Step 5: Confirm Success
+### Step 5: Save to Memory (use Serena MCP)
+
+Save current OSS project to memory for easy access:
+
+```python
+# Save current OSS context
+serena_mcp.write_memory("current_oss", {
+    "repo_url": repo_url,
+    "owner": owner,
+    "repo": repo_name,
+    "notion_page_id": notion_page_id,
+    "registered_at": current_timestamp
+})
+```
+
+This allows users to omit URLs in subsequent commands:
+- `/analyze-commit <hash>` instead of `/analyze-commit <url> <hash>`
+- `/analyze-pr <number>` instead of `/analyze-pr <url>/pull/<number>`
+
+### Step 6: Confirm Success
 
 Return to user:
 ```markdown
@@ -84,8 +103,9 @@ Return to user:
 📄 Notion: https://notion.so/your-oss-page-id
 
 💡 Next steps:
-- Analyze commits: /analyze-commit <url> <commit-hash>
-- Analyze PR: /analyze-pr <pr-url>
+- Check current project: /current-oss
+- Analyze commits: /analyze-commit <commit-hash>  ⬅️ URL not needed!
+- Analyze PR: /analyze-pr <pr-number>
 - View in Notion: [link]
 ```
 
@@ -195,13 +215,18 @@ Steps to fix:
 💻 **Language**: JavaScript
 📄 **Notion Page**: https://notion.so/Express-js-abc123
 
+💾 **Saved as current project** - URL no longer needed for analysis!
+
 ## Quick Start
 
-Analyze a commit:
-/analyze-commit https://github.com/expressjs/express abc1234
+Check current project:
+/current-oss
 
-Analyze a PR:
-/analyze-pr https://github.com/expressjs/express/pull/5234
+Analyze a commit (URL optional!):
+/analyze-commit abc1234
+
+Analyze a PR (URL optional!):
+/analyze-pr 5234
 
 View in Notion:
 https://notion.so/Express-js-abc123
@@ -216,11 +241,14 @@ https://notion.so/Express-js-abc123
 📄 **Notion Page**: https://notion.so/Express-js-abc123
 📅 **Registered**: 2025-01-10
 
+💾 **Set as current project** - URL no longer needed for analysis!
+
 ✅ Ready to analyze!
 
 Examples:
-  /analyze-commit <url> <commit>
-  /analyze-pr <pr-url>
+  /current-oss
+  /analyze-commit <commit-hash>
+  /analyze-pr <pr-number>
 ```
 
 ## Advanced Options
