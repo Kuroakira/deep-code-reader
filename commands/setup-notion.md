@@ -77,7 +77,7 @@ This will update:
 1. **Claude Desktop**: `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `~/.config/Claude/claude_desktop_config.json` (Linux)
 2. **Claude Code CLI**: `~/.claude/.mcp.json`
 
-Both configurations will have `NOTION_API_KEY` set in the Notion MCP server environment variables.
+Both configurations will have `NOTION_TOKEN` set in the Notion MCP server environment variables.
 
 **Expected output:**
 ```

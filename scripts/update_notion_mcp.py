@@ -53,7 +53,7 @@ def update_notion_api_key(config_path, api_key):
                 "command": "npx",
                 "args": ["-y", "@notionhq/notion-mcp-server"],
                 "env": {
-                    "NOTION_API_KEY": api_key
+                    "NOTION_TOKEN": api_key
                 }
             }
         else:
@@ -62,7 +62,7 @@ def update_notion_api_key(config_path, api_key):
                 "command": "npx",
                 "args": ["-y", "@notionhq/notion-mcp-server"],
                 "env": {
-                    "NOTION_API_KEY": api_key
+                    "NOTION_TOKEN": api_key
                 }
             }
     else:
@@ -74,7 +74,7 @@ def update_notion_api_key(config_path, api_key):
 
         if 'env' not in config['mcpServers']['notion']:
             config['mcpServers']['notion']['env'] = {}
-        config['mcpServers']['notion']['env']['NOTION_API_KEY'] = api_key
+        config['mcpServers']['notion']['env']['NOTION_TOKEN'] = api_key
 
     # Write back
     with open(config_path, 'w') as f:

@@ -316,7 +316,7 @@ elif "notion" in package:
         "command": "npx",
         "args": ["-y", "@notionhq/notion-mcp-server"],
         "env": {
-            "NOTION_API_KEY": ""
+            "NOTION_TOKEN": ""
         }
     }
 
@@ -417,7 +417,7 @@ mcp_servers = {
         "command": "npx",
         "args": ["-y", "@notionhq/notion-mcp-server"],
         "env": {
-            "NOTION_API_KEY": ""
+            "NOTION_TOKEN": ""
         }
     }
 }
@@ -628,7 +628,7 @@ notion_server_config = {
     "command": "npx",
     "args": ["-y", "@notionhq/notion-mcp-server"],
     "env": {
-        "NOTION_API_KEY": "$NOTION_KEY"
+        "NOTION_TOKEN": "$NOTION_KEY"
     }
 }
 
@@ -745,8 +745,8 @@ verify_installation() {
     # Check Notion setup status
     NOTION_CONFIGURED=false
     if [ -f "$HOME/.claude/deep-code-reader/notion_config.json" ]; then
-        NOTION_API_KEY=$(python3 -c "import json; print(json.load(open('$HOME/.claude/deep-code-reader/notion_config.json')).get('api_key', ''))" 2>/dev/null || echo "")
-        if [ -n "$NOTION_API_KEY" ]; then
+        NOTION_TOKEN=$(python3 -c "import json; print(json.load(open('$HOME/.claude/deep-code-reader/notion_config.json')).get('api_key', ''))" 2>/dev/null || echo "")
+        if [ -n "$NOTION_TOKEN" ]; then
             NOTION_CONFIGURED=true
         fi
     fi
