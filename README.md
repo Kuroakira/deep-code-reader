@@ -3,18 +3,19 @@
 **Automated OSS codebase analysis with intelligent insights and Notion integration, powered by Claude Code and MCP servers.**
 
 Perfect for developers who want to:
-- 🚀 Quickly understand unfamiliar OSS projects
-- 📚 Build a knowledge base of analyzed codebases
-- 🤝 Identify contribution opportunities
-- 📊 Generate comprehensive architecture documentation
+- 🚀 Understand commits and PRs deeply
+- 📚 Build a knowledge base in Notion
+- 🎯 Learn WHY changes were made, not just WHAT
+- 🤝 Prepare for contributions with context
 
 ## ✨ Features
 
-### 🔍 Deep Code Analysis
-- **Architecture visualization** - Mermaid & draw.io diagrams
-- **Data flow tracing** - Understand how data moves through the system
-- **Dependency mapping** - Identify module relationships and circular dependencies
-- **Pattern recognition** - Detect MVC, Clean Architecture, and other patterns
+### 🔍 Commit-Level Deep Analysis
+- **Why (変更の意図)** - Understand the motivation behind changes
+- **What (変更内容)** - See exactly what was changed
+- **Impact (影響範囲)** - Know which modules are affected
+- **Design (設計意図)** - Learn the design decisions and trade-offs
+- **Context (コンテキスト)** - Related issues, PRs, and surrounding commits
 
 ### 🤖 Intelligent Automation
 - **One-command installation** - `./install.sh` sets up everything
@@ -54,16 +55,19 @@ The installer will:
 # Start Claude Code
 claude-code
 
-# Analyze any GitHub repository
-/analyze-oss https://github.com/expressjs/express main
+# Step 1: Register OSS repository
+/register-oss https://github.com/expressjs/express
+
+# Step 2: Analyze a commit
+/analyze-commit https://github.com/expressjs/express abc1234567
 ```
 
 **That's it!** Claude will:
-- 🔄 Clone the repository
-- 🏗️ Analyze architecture
-- 📊 Generate diagrams
-- 💡 Provide contribution recommendations
-- 📤 Export everything to Notion
+- 🔄 Fetch commit information
+- 🎯 Understand WHY the change was made
+- 🏗️ Analyze impact on architecture
+- 📊 Show detailed analysis in console
+- 📤 Export everything to Notion automatically
 
 ## 📁 Project Structure
 
@@ -88,84 +92,90 @@ claude_skills/
 
 ## 🎯 Usage Examples
 
-### Basic Analysis
+### Register OSS Repository
 
 ```bash
-# Analyze a repository at HEAD
-/analyze-oss https://github.com/vuejs/core
+# First time: Register the repository
+/register-oss https://github.com/expressjs/express
 
-# Analyze a specific commit
-/analyze-oss https://github.com/react/react v18.0.0
-
-# Quick architecture-only analysis
-/analyze-oss https://github.com/django/django --quick
+# Creates entry in OSSリスト Notion database
 ```
 
-### Notion Integration
+### Analyze Commits
 
 ```bash
-# Set up Notion (first time only)
+# Analyze a single commit
+/analyze-commit https://github.com/expressjs/express abc1234
+
+# Shows detailed analysis in console + exports to Notion
+```
+
+### Analyze Pull Requests
+
+```bash
+# Analyze all commits in a PR
+/analyze-pr https://github.com/expressjs/express/pull/5234
+
+# Asks: analyze all commits or select specific ones
+```
+
+### Notion Setup
+
+```bash
+# Configure Notion integration (first time only)
 /setup-notion
 
-# Analysis automatically exports to Notion
-/analyze-oss https://github.com/sveltejs/svelte
-
-# Manually export previous analysis
-/export-analysis
-```
-
-### Advanced Options
-
-```bash
-# Focus on specific directory
-/analyze-oss <url> --focus src/core
-
-# Export with custom template
-/export-analysis --template detailed
-
-# Batch export multiple analyses
-/export-analysis --batch
+# Or manually edit: config/notion_config.json
 ```
 
 ## 💡 What You Get
 
-After analyzing a repository, you'll receive:
+After analyzing a commit, you'll receive:
 
 ### 📊 In Claude Code
 
 ```markdown
-## Analysis Complete: Express.js
+📊 Commit Analysis: abc1234
 
-### Architecture
-- Pattern: Layered Architecture
-- Layers: Router → Middleware → Application → Response
-- Tech Stack: JavaScript, Node.js
+## 🎯 変更の意図 (Why)
+Fix security vulnerability in authentication middleware (CVE-2024-1234)
 
-### Key Data Flows
-- HTTP Request → Middleware Chain → Route Handler → Response
-- Error Handling → Error Middleware → Client
+Related Issues: #1234, #1235
 
-### Dependencies
-- External: 30 packages
-- Circular deps: 0
-- Key libraries: body-parser, cookie-parser, debug
+## 📝 変更内容 (What)
+Changed Files (3):
+- src/auth/middleware.js (+45, -12)
+- src/auth/validator.js (+23, -5)
+- test/auth.test.js (+67, -0)
 
-### Contribution Opportunities
-1. Add TypeScript definitions for middleware
-2. Improve error handling in router module
-3. Add tests for edge cases in request parsing
+## 🏗️ 影響範囲 (Impact)
+Affected Modules:
+- api/routes/* (10 files)
+- middleware/session.js
+✅ No breaking changes
 
-Notion: https://notion.so/your-analysis-page
+## 🎨 設計意図 (Design)
+Pattern: Chain of Responsibility
+Trade-off: +2MB memory for 10x security
+
+## 🔗 コンテキスト
+Before: abc0123 - Refactor auth module
+After: abc1235 - Update documentation
+PR: #5234 (5 approving reviews)
+
+💾 Exported to Notion: https://notion.so/commit-page
 ```
 
 ### 📝 In Notion
 
-A beautifully formatted page with:
-- 🏗️ Architecture overview with diagrams
-- 🔄 Data flow visualizations
-- 📦 Dependency graphs
-- 💡 Actionable contribution recommendations
-- 📋 Raw analysis data (JSON)
+A structured analysis page with:
+- 🎯 変更の意図 - Why this change was made
+- 📝 変更内容 - What was changed (with code diff)
+- 🏗️ 影響範囲 - Impact on the codebase
+- 🎨 設計意図 - Design decisions and trade-offs
+- 🔗 コンテキスト - Related issues, commits, PRs
+- 📋 Complete diff (in toggle)
+- 📝 Memo field (for your notes)
 
 ## 🛠️ MCP Servers Used
 

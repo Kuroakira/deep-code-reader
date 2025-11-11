@@ -193,49 +193,74 @@ setup_notion() {
     echo ""
     echo "To enable Notion export functionality, you need:"
     echo "  1. Notion API Key (Integration Token)"
-    echo "  2. Notion Database ID (where analyses will be stored)"
+    echo "  2. Two Notion Databases:"
+    echo "     - OSSリスト (Parent database for repositories)"
+    echo "     - Commit & PRリスト (Child database for commits/PRs)"
     echo ""
     echo -e "${BLUE}Setup Notion now? (y/n)${NC}"
     read -r setup_notion_now
 
     if [[ "$setup_notion_now" =~ ^[Yy]$ ]]; then
         echo ""
+        echo "📝 Step 1: Create Notion Integration"
         echo "Visit: https://www.notion.so/my-integrations"
         echo "Create a new integration and copy the 'Internal Integration Token'"
         echo ""
         read -p "Enter your Notion API Key: " NOTION_KEY
 
         echo ""
-        echo "Create a database in Notion and copy its ID from the URL"
+        echo "📝 Step 2: OSSリスト Database"
+        echo "Create a database with properties:"
+        echo "  - Name (title)"
+        echo "  - GitHub URL (url)"
+        echo ""
+        echo "Copy the database ID from URL:"
         echo "Example: https://notion.so/workspace/DATABASE_ID?v=..."
         echo ""
-        read -p "Enter your Notion Database ID: " NOTION_DB_ID
+        read -p "Enter OSSリスト Database ID: " OSS_DB_ID
+
+        echo ""
+        echo "📝 Step 3: Commit & PRリスト Database"
+        echo "Create a database with properties:"
+        echo "  - Title (title)"
+        echo "  - Commit ID / PR No (text)"
+        echo "  - Comment (text)"
+        echo "  - Created Date (date)"
+        echo "  - GitHub URL (url)"
+        echo "  - Memo (text)"
+        echo "  - OSS (relation to OSSリスト)"
+        echo ""
+        read -p "Enter Commit & PRリスト Database ID: " COMMITS_DB_ID
 
         # Save to config
         cat > "$REPO_ROOT/config/notion_config.json" <<EOF
 {
   "api_key": "$NOTION_KEY",
-  "database_id": "$NOTION_DB_ID",
+  "oss_database_id": "$OSS_DB_ID",
+  "commits_database_id": "$COMMITS_DB_ID",
   "auto_export": true,
-  "page_template": "analysis"
+  "analysis_mode": "commit"
 }
 EOF
 
         echo ""
         echo -e "${GREEN}✓${NC} Notion configuration saved"
+        echo ""
+        echo "🔗 Next steps:"
+        echo "  1. Share both databases with your integration"
+        echo "  2. Verify properties match the structure above"
+        echo "  3. Run: /register-oss <github-url>"
     else
         echo -e "  ${YELLOW}⚠${NC} Skipping Notion setup (you can configure later)"
 
-        # Create template config
-        cat > "$REPO_ROOT/config/notion_config.json" <<EOF
-{
-  "api_key": "YOUR_NOTION_API_KEY",
-  "database_id": "YOUR_DATABASE_ID",
-  "auto_export": false,
-  "page_template": "analysis"
-}
-EOF
+        # Copy template config
+        cp "$REPO_ROOT/config/notion_config_template.json" "$REPO_ROOT/config/notion_config.json"
         echo -e "  ${BLUE}ℹ${NC} Edit config/notion_config.json when ready"
+        echo ""
+        echo "Template structure:"
+        echo "  - oss_database_id: Your OSSリスト database ID"
+        echo "  - commits_database_id: Your Commit & PRリスト database ID"
+        echo "  - api_key: Your Notion integration token"
     fi
 
     echo ""

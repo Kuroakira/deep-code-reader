@@ -1,239 +1,280 @@
-# Quick Start Guide - Deep Code Reader
+# Quick Start Guide - OSS Learning Platform
 
-This guide will help you get started with the Deep Code Reader skill in 5 minutes.
+This guide will help you start analyzing OSS commits in 5 minutes.
 
-## Installation
+## Installation (2 minutes)
 
-### Option 1: Claude.ai (Web/Mobile/Desktop)
-1. Download `skills/deep-code-reader.skill` from releases
-2. Open Claude.ai → Settings → Skills
-3. Click "Upload Skill" and select the `.skill` file
-4. The skill activates automatically when you work with code
+### Step 1: Clone Repository
 
-### Option 2: Claude Code (Terminal)
 ```bash
-# Clone the repository
 git clone https://github.com/Kuroakira/claude_skills.git
-
-# Copy to skills directory
-mkdir -p ~/.claude/skills
-cp -r claude_skills/skills/deep-code-reader ~/.claude/skills/deep-code-reader
-
-# The skill is now available in Claude Code
+cd claude_skills
 ```
 
-## First Steps
+### Step 2: Run Installer
 
-### 1. Understand a Project's Architecture (2 minutes)
-
-**Ask Claude:**
-```
-I want to understand the architecture of this project. 
-Can you analyze it and create diagrams?
+```bash
+./install.sh
 ```
 
-Then provide the path to your codebase or upload files.
+The installer will:
+1. ✅ Check dependencies (Node.js, Python, npm)
+2. 📦 Install MCP servers (GitHub, Brave Search, Notion)
+3. ⚙️  Configure Claude Code
+4. 🎯 Install skills and commands
+5. 🔐 Set up Notion integration
 
-**Claude will:**
-- Analyze the directory structure
-- Detect architectural patterns
-- Generate Mermaid and draw.io diagrams
-- Identify major components and layers
+### Step 3: Configure Notion
 
-**You'll get:**
-- `architecture.mmd` - View in GitHub or Mermaid Live Editor
-- `architecture.drawio` - Edit in draw.io
-- `architecture_analysis.json` - Raw data for further analysis
+During installation, you'll be prompted:
 
-### 2. Trace a Specific Flow (3 minutes)
-
-**Ask Claude:**
 ```
-Show me how authentication works in this codebase
+Setup Notion now? (y/n)
 ```
 
-**Claude will:**
-- Scan for authentication-related functions
-- Trace the execution flow
-- Generate a flow diagram
-- Identify key decision points
+**Say yes** and provide:
+1. **Notion API Key** - Get from https://www.notion.so/my-integrations
+2. **OSSリスト Database ID** - Create a database with:
+   - Name (title)
+   - GitHub URL (url)
+3. **Commit & PRリスト Database ID** - Create a database with:
+   - Title (title)
+   - Commit ID / PR No (text)
+   - Comment (text)
+   - Created Date (date)
+   - GitHub URL (url)
+   - Memo (text)
+   - OSS (relation to OSSリスト)
 
-**You'll get:**
-- Flow diagram showing the auth process
-- List of involved functions
-- Entry points and exit points
+**Don't forget**: Share both databases with your integration!
 
-### 3. Analyze a GitHub PR (2 minutes)
+---
 
-**Ask Claude:**
-```
-Help me understand this PR: https://github.com/org/repo/pull/123
-```
+## First Analysis (3 minutes)
 
-**Claude will:**
-- Fetch PR metadata and description
-- Get linked issues
-- Retrieve all comments and reviews
-- Show commit history
-- Identify changed files
+### Step 1: Start Claude Code
 
-**You'll get:**
-- Comprehensive markdown summary
-- JSON with all PR data
-- Context needed for informed review
-
-### 4. Find Dependency Issues (3 minutes)
-
-**Ask Claude:**
-```
-Analyze the dependencies in this codebase and 
-check for any circular dependencies
+```bash
+claude-code
 ```
 
-**Claude will:**
-- Map all module dependencies
-- Detect circular dependencies
-- Identify highly coupled modules
-- List external package usage
+### Step 2: Register OSS Repository
 
-**You'll get:**
-- Dependency diagrams
-- Circular dependency warnings
-- Coupling metrics
-
-## Example Conversations
-
-### Scenario: New OSS Contributor
-
-**You:** I want to contribute to this project but I'm not familiar with it yet. 
-Can you help me understand the codebase?
-
-**Claude:** I'll use the Deep Code Reader skill to analyze this project. Let me:
-1. Generate an architecture overview
-2. Identify the main architectural patterns
-3. Show you where key features are implemented
-
-[Claude runs analysis and creates diagrams]
-
-**Claude:** Here's what I found:
-- The project uses Clean Architecture with clear layer separation
-- Main components: API layer, Domain layer, Infrastructure
-- Authentication is handled in the Infrastructure/Auth module
-- Here's a diagram showing the architecture...
-
-### Scenario: PR Review
-
-**You:** Can you help me review this PR? 
-https://github.com/fastapi/fastapi/pull/12345
-
-**Claude:** I'll fetch the complete context for this PR...
-
-[Claude gathers PR information]
-
-**Claude:** This PR addresses issue #12340 about WebSocket support. Here's the context:
-- 5 commits over 2 days
-- Changes 8 files (mostly in the WebSocket module)
-- 2 reviewers have approved
-- One concern about backward compatibility (see comment thread)
-- Here's what changed...
-
-## Tips for Best Results
-
-1. **Be specific about what you want to understand**
-   - "Show me the authentication flow" ✅
-   - "Explain this code" ❌ (too vague)
-
-2. **Provide context**
-   - Upload files or share repository links
-   - Mention specific areas of interest
-   - Ask follow-up questions
-
-3. **Use the right analysis for your need**
-   - Architecture diagrams → Overall understanding
-   - Data flow → Specific feature understanding
-   - Dependencies → Code quality/refactoring
-   - PR context → Code review preparation
-
-4. **Iterate on the analysis**
-   - Start with broad analysis
-   - Then drill down into specific areas
-   - Ask for clarification on unclear parts
-
-## Common Use Cases
-
-### Use Case 1: Project Onboarding
 ```
-I'm new to this project. Help me understand:
-1. The overall architecture
-2. Where the main business logic lives
-3. How to add a new feature
+/register-oss https://github.com/expressjs/express
 ```
 
-### Use Case 2: Bug Investigation
+**What happens:**
+- ✅ Creates entry in your OSSリスト database
+- ✅ Fetches repository metadata
+- ✅ Returns Notion page URL
+
+**Output:**
 ```
-There's a bug in the payment processing. Can you:
-1. Show me the payment flow
-2. Identify all functions involved
-3. Help me trace where the issue might be
+✅ OSS Repository Registered!
+
+📦 Project: Express.js
+🔗 GitHub: https://github.com/expressjs/express
+📄 Notion: https://notion.so/Express-js-abc123
+
+💡 Next: /analyze-commit <url> <commit-hash>
 ```
 
-### Use Case 3: Refactoring Planning
+### Step 3: Analyze a Commit
+
 ```
-I want to refactor the authentication module. Help me:
-1. Understand current dependencies
-2. Identify what would be affected
-3. Suggest a refactoring approach
+/analyze-commit https://github.com/expressjs/express abc1234567
 ```
 
-### Use Case 4: Documentation
+**What happens:**
+- 📥 Fetches commit data from GitHub
+- 🔍 Extracts related issues
+- 🧠 Analyzes with AI (Sequential Thinking + Serena MCP)
+- 📊 Shows detailed analysis in console
+- 💾 Exports to Notion automatically
+
+**Console Output:**
 ```
-Generate architecture documentation for this project including:
-1. High-level architecture diagram
-2. Component relationship diagrams
-3. Data flow diagrams
+📊 Commit Analysis: abc1234
+
+## 🎯 変更の意図 (Why)
+Fix security vulnerability in authentication middleware
+
+## 📝 変更内容 (What)
+Changed Files: 3
+- src/auth/middleware.js (+45, -12)
+- src/auth/validator.js (+23, -5)
+- test/auth.test.js (+67, -0)
+
+## 🏗️ 影響範囲 (Impact)
+Affected Modules: 10 files
+✅ No breaking changes
+
+## 🎨 設計意図 (Design)
+Chain of Responsibility pattern
+Trade-off: +2MB memory for 10x security
+
+## 🔗 コンテキスト
+Related Issues: #1234, #1235
+PR: #5234 (5 reviews)
+
+✅ Exported to Notion: https://notion.so/commit-abc123
 ```
 
-## Next Steps
+### Step 4: Check Notion
 
-1. **Try the skill** with your own projects
-2. **Read the full documentation** in SKILL.md
-3. **Check the reference materials** for code reading strategies
-4. **Customize the templates** for your needs
+Open the Notion page to see:
+- ✅ Full structured analysis
+- ✅ Code diff with syntax highlighting
+- ✅ All context (issues, commits, PR)
+- ✅ Memo field for your notes
+
+---
+
+## Advanced Usage
+
+### Analyze Pull Requests
+
+```
+/analyze-pr https://github.com/expressjs/express/pull/5234
+```
+
+Analyzes all commits in the PR:
+- Lists all commits
+- You choose: all, specific, or summary only
+- Creates individual pages for each commit
+- Links them in Notion
+
+### Compare Multiple Commits
+
+```
+/analyze-commit <url> <commit1>
+/analyze-commit <url> <commit2>
+/analyze-commit <url> <commit3>
+```
+
+Build a timeline of changes in your Notion database.
+
+### Focus on Specific Aspects
+
+```
+/analyze-commit <url> <commit> --focus security
+/analyze-commit <url> <commit> --focus performance
+```
+
+Get targeted analysis.
+
+---
+
+## Tips for Learning
+
+### 1. Start Small
+- Pick a small, focused commit (< 5 files changed)
+- Understand it completely before moving to bigger ones
+
+### 2. Follow a Feature
+- Find a feature you're interested in
+- Analyze all commits related to it
+- See how it evolved over time
+
+### 3. Study Patterns
+- Look for recurring design patterns
+- Notice how experienced developers structure changes
+- Learn from commit messages
+
+### 4. Use the Memo Field
+- Add your own insights in Notion
+- Note questions to explore later
+- Link related commits
+
+### 5. Build Your Database
+- Consistently analyze commits
+- Create a personal knowledge base
+- Review your notes periodically
+
+---
 
 ## Troubleshooting
 
-**Problem:** Skill doesn't activate
+### "Repository not registered"
 
-**Solution:** Make sure you've mentioned code analysis, architecture, or uploaded code files
+```
+⚠️  Repository Not Registered
 
----
-
-**Problem:** GitHub API rate limit exceeded
-
-**Solution:** Set a GitHub token:
-```bash
-export GITHUB_TOKEN=your_token_here
+Run: /register-oss <url>
 ```
 
+**Solution**: Register the repository first with `/register-oss`.
+
+### "Notion not configured"
+
+```
+❌ Notion not configured
+
+Run: /setup-notion
+```
+
+**Solution**:
+1. Run `/setup-notion` command
+2. Or manually edit `config/notion_config.json`
+
+### "Commit not found"
+
+```
+❌ Commit not found: abc1234
+```
+
+**Solution**:
+- Verify commit hash is correct
+- Use full hash or at least 7 characters
+- Check if commit exists in repository
+
+### "Rate limit exceeded"
+
+```
+⚠️  GitHub API rate limit
+
+Try again in: 5 minutes
+```
+
+**Solution**:
+- Wait for rate limit reset
+- Set `GITHUB_TOKEN` environment variable for higher limits
+
 ---
-
-**Problem:** Analysis takes too long
-
-**Solution:** Focus on specific directories instead of the entire codebase
-
-## Getting Help
-
-- Check the main README.md for full documentation
-- Review SKILL.md for detailed usage instructions
-- See references/ for code reading methodologies
-- Open an issue on GitHub for bugs or questions
 
 ## What's Next?
 
-Once you're comfortable with the basics:
-- Explore advanced usage in SKILL.md
-- Customize scripts for your workflow
-- Integrate with your development tools
-- Share your insights with the team
+### Explore More Commits
+- Analyze commits from different contributors
+- Compare different approaches to similar problems
+- Build your understanding incrementally
 
-**Happy Code Reading! 🚀**
+### Analyze PRs
+- Study complete features through PR analysis
+- Understand the review process
+- Learn from discussions
+
+### Build Your Knowledge Base
+- Organize commits by topic in Notion
+- Add tags and relations
+- Create summary pages
+
+### Contribute Back
+- Use insights to make your first contribution
+- Write better commit messages
+- Share your learning with others
+
+---
+
+## Need Help?
+
+- **Documentation**: See README.md for full details
+- **Commands**: All commands have detailed .md files in `commands/`
+- **Issues**: Report problems at https://github.com/Kuroakira/claude_skills/issues
+
+---
+
+**Happy Learning! 🚀**
+
+*Remember: Understanding WHY is more important than knowing WHAT.*
