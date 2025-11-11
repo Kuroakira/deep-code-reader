@@ -448,21 +448,61 @@ EOF
             echo ""
 
             # Update MCP configurations
-            echo "📝 Step 2: Configuring MCP Servers..."
+            echo "📝 Step 2: Configuring MCP Server..."
             echo ""
 
-            if python3 "$HOME/.claude/deep-code-reader/scripts/update_notion_mcp.py" "$NOTION_KEY"; then
+            # Configure Notion MCP by updating ~/.claude.json
+            echo "  • Adding Notion MCP server to Claude Code CLI..."
+            python3 - <<EOF
+import json
+from pathlib import Path
+
+config_path = Path.home() / ".claude.json"
+notion_server_config = {
+    "command": "npx",
+    "args": ["-y", "@notionhq/notion-mcp-server"],
+    "env": {
+        "NOTION_API_KEY": "$NOTION_KEY"
+    }
+}
+
+try:
+    # Read existing config
+    if config_path.exists():
+        with open(config_path, 'r') as f:
+            config = json.load(f)
+    else:
+        config = {}
+
+    # Ensure mcpServers exists
+    if 'mcpServers' not in config:
+        config['mcpServers'] = {}
+
+    # Add or update Notion server
+    config['mcpServers']['notion'] = notion_server_config
+
+    # Write back
+    with open(config_path, 'w') as f:
+        json.dump(config, f, indent=2)
+
+    print("✓ Notion MCP server configured in ~/.claude.json")
+    exit(0)
+except Exception as e:
+    print(f"✗ Failed to configure: {e}")
+    exit(1)
+EOF
+
+            if [ $? -eq 0 ]; then
                 echo ""
-                echo -e "${GREEN}✓${NC} MCP configurations updated successfully"
+                echo -e "${GREEN}✓${NC} MCP configuration completed successfully"
                 echo ""
                 echo "╔════════════════════════════════════════════╗"
                 echo "║   Initial Setup Complete!                 ║"
                 echo "╚════════════════════════════════════════════╝"
                 echo ""
                 echo -e "${GREEN}✅ What's been configured:${NC}"
-                echo "  ✓ Notion API key saved"
-                echo "  ✓ Claude Desktop MCP configured"
-                echo "  ✓ Claude Code CLI MCP configured"
+                echo "  ✓ Notion API key saved to ~/.claude/deep-code-reader/"
+                echo "  ✓ Notion MCP server added to Claude Code CLI"
                 echo ""
                 echo -e "${YELLOW}📝 Next Steps (after installation):${NC}"
                 echo "  1. Grant integration access to a workspace page:"
@@ -481,10 +521,12 @@ EOF
                 echo ""
             else
                 echo ""
-                echo -e "${RED}✗${NC} Failed to update MCP configurations"
+                echo -e "${RED}✗${NC} Failed to configure MCP server"
                 echo ""
-                echo -e "${YELLOW}You can update manually later by running:${NC}"
-                echo "  python3 ~/.claude/deep-code-reader/scripts/update_notion_mcp.py \"$NOTION_KEY\""
+                echo -e "${YELLOW}You can add it manually later:${NC}"
+                echo "  1. Start Claude Code and run: /mcp"
+                echo "  2. Select 'Add Server' and choose Notion"
+                echo "  3. Configure API key in ~/.claude.json"
                 echo ""
             fi
         fi

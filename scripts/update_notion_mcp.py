@@ -49,6 +49,7 @@ def update_notion_api_key(config_path, api_key):
         if is_cli_config:
             # Claude Code CLI format
             config['mcpServers']['notion'] = {
+                "type": "stdio",
                 "command": "npx",
                 "args": ["-y", "@notionhq/notion-mcp-server"],
                 "env": {
@@ -66,6 +67,11 @@ def update_notion_api_key(config_path, api_key):
             }
     else:
         # Update existing notion server
+        # Check if this is Claude CLI config and add type if missing
+        is_cli_config = any('type' in server for server in config.get('mcpServers', {}).values())
+        if is_cli_config and 'type' not in config['mcpServers']['notion']:
+            config['mcpServers']['notion']['type'] = 'stdio'
+
         if 'env' not in config['mcpServers']['notion']:
             config['mcpServers']['notion']['env'] = {}
         config['mcpServers']['notion']['env']['NOTION_API_KEY'] = api_key
