@@ -46,7 +46,7 @@ cd deep-code-reader
 The installer will:
 1. ✅ Check dependencies (Node.js, Python, npm)
 2. 📦 Install MCP servers (auto-detects existing installations)
-   - Required: GitHub, Brave Search, Notion
+   - Required: GitHub, Notion
    - Optional: Additional MCP servers (interactive selection)
 3. ⚙️  Configure Claude Code
 4. 🎯 Install skills and commands
@@ -287,7 +287,6 @@ This platform leverages powerful MCP servers:
 
 ### External (Auto-installed)
 - **GitHub MCP** - Repository metadata and access
-- **Brave Search MCP** - Web search for documentation
 - **Notion MCP** - Automated export to Notion
 
 ## 📚 Documentation

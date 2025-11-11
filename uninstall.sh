@@ -54,7 +54,6 @@ check_installed_components() {
     # Check MCP Servers
     local mcp_servers=(
         "@modelcontextprotocol/server-github"
-        "@modelcontextprotocol/server-brave-search"
         "@notionhq/notion-mcp-server"
     )
 
@@ -180,7 +179,6 @@ remove_mcp_servers() {
 
     local servers=(
         "@modelcontextprotocol/server-github:GitHub MCP"
-        "@modelcontextprotocol/server-brave-search:Brave Search MCP"
         "@notionhq/notion-mcp-server:Notion MCP"
     )
 

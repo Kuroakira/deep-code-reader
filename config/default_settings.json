@@ -35,9 +35,7 @@
       "github",
       "notion"
     ],
-    "optional": [
-      "brave-search"
-    ],
+    "optional": [],
     "built_in": [
       "serena",
       "context7",

@@ -78,8 +78,6 @@ check_mcp_installed() {
             server_name="notion"
         elif [[ "$package" == *"github"* ]]; then
             server_name="github"
-        elif [[ "$package" == *"brave"* ]]; then
-            server_name="brave-search"
         fi
 
         if [ -n "$server_name" ]; then
@@ -109,8 +107,6 @@ check_mcp_configured() {
             server_name="notion"
         elif [[ "$package" == *"github"* ]]; then
             server_name="github"
-        elif [[ "$package" == *"brave"* ]]; then
-            server_name="brave-search"
         fi
 
         if [ -n "$server_name" ]; then
@@ -131,7 +127,6 @@ install_mcp_servers() {
     echo -e "${BLUE}Required MCP Servers:${NC}"
     local required_servers=(
         "@modelcontextprotocol/server-github:GitHub MCP:required"
-        "@modelcontextprotocol/server-brave-search:Brave Search MCP:required"
         "@notionhq/notion-mcp-server:Notion MCP:required"
     )
 
@@ -227,15 +222,6 @@ if "github" in package:
             "GITHUB_PERSONAL_ACCESS_TOKEN": ""
         }
     }
-elif "brave" in package:
-    server_name = "brave-search"
-    server_config = {
-        "command": "npx",
-        "args": ["-y", "@modelcontextprotocol/server-brave-search"],
-        "env": {
-            "BRAVE_API_KEY": ""
-        }
-    }
 
 if server_name:
     try:
@@ -322,15 +308,6 @@ if "github" in package:
         "args": ["-y", "@modelcontextprotocol/server-github"],
         "env": {
             "GITHUB_PERSONAL_ACCESS_TOKEN": ""
-        }
-    }
-elif "brave" in package:
-    server_name = "brave-search"
-    server_config = {
-        "command": "npx",
-        "args": ["-y", "@modelcontextprotocol/server-brave-search"],
-        "env": {
-            "BRAVE_API_KEY": ""
         }
     }
 elif "notion" in package:
@@ -434,13 +411,6 @@ mcp_servers = {
         "args": ["-y", "@modelcontextprotocol/server-github"],
         "env": {
             "GITHUB_PERSONAL_ACCESS_TOKEN": ""
-        }
-    },
-    "brave-search": {
-        "command": "npx",
-        "args": ["-y", "@modelcontextprotocol/server-brave-search"],
-        "env": {
-            "BRAVE_API_KEY": ""
         }
     },
     "notion": {
@@ -764,7 +734,7 @@ verify_installation() {
     echo -e "${GREEN}╚════════════════════════════════════════════╝${NC}"
     echo ""
     echo "📦 Installed Components:"
-    echo "  ✓ MCP Servers (GitHub, Brave Search, Notion)"
+    echo "  ✓ MCP Servers (GitHub, Notion)"
     echo "  ✓ Claude Skills (deep-code-reader)"
     echo "  ✓ Slash Commands"
     echo "  ✓ Configuration files"
