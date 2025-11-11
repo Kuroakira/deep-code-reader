@@ -62,11 +62,32 @@ check_dependencies() {
 
 check_mcp_installed() {
     local package=$1
+
+    # Check if globally installed
     if npm list -g "$package" &>/dev/null; then
         return 0  # Already installed
-    else
-        return 1  # Not installed
     fi
+
+    # Check if configured in ~/.claude.json (for npx-based servers)
+    if [ -f "$HOME/.claude.json" ]; then
+        # Extract server name from package (e.g., @notionhq/notion-mcp-server -> notion)
+        local server_name
+        if [[ "$package" == *"notion"* ]]; then
+            server_name="notion"
+        elif [[ "$package" == *"github"* ]]; then
+            server_name="github"
+        elif [[ "$package" == *"brave"* ]]; then
+            server_name="brave-search"
+        fi
+
+        if [ -n "$server_name" ]; then
+            if python3 -c "import json, sys; config=json.load(open('$HOME/.claude.json')); sys.exit(0 if '$server_name' in config.get('mcpServers', {}) else 1)" 2>/dev/null; then
+                return 0  # Already configured
+            fi
+        fi
+    fi
+
+    return 1  # Not installed
 }
 
 install_mcp_servers() {
