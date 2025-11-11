@@ -144,6 +144,56 @@ Analyzed Commits:
 💡 View all in Notion under: [OSS → Express.js → PR #5234]
 ```
 
+### Next PR Suggestions
+
+After successful analysis, suggest next PRs to analyze:
+
+```python
+# Get recent merged PRs
+recent_prs = github_mcp.list_pull_requests(
+    owner=owner,
+    repo=repo,
+    state="merged",
+    per_page=5
+)
+
+# Filter out already analyzed PRs
+analyzed_prs = serena_mcp.read_memory("analyzed_prs") or []
+unanalyzed = [pr for pr in recent_prs if pr["number"] not in analyzed_prs]
+
+# Mark current PR as analyzed
+analyzed_prs.append(pr_number)
+serena_mcp.write_memory("analyzed_prs", analyzed_prs)
+```
+
+Display suggestions:
+
+```markdown
+---
+
+🔍 Next Suggestions
+
+Recent merged PRs from this project:
+
+1. 🆕 #5235 - Add TypeScript definitions
+   📅 Merged: 2025-01-16 • 💬 8 comments • 🔢 4 commits
+   /analyze-pr 5235
+
+2. 🆕 #5233 - Performance optimization for routing
+   📅 Merged: 2025-01-14 • 💬 12 comments • 🔢 6 commits
+   /analyze-pr 5233
+
+3. ✅ #5232 - Fix memory leak (already analyzed)
+
+💡 Commands:
+  /list-prs              # Browse all PRs
+  /list-prs --state open # See open PRs
+  /list-commits          # Browse individual commits
+  /current-oss           # Check current project
+
+Continue exploring! 🚀
+```
+
 ## Tips
 
 - Use PR analysis for understanding feature additions

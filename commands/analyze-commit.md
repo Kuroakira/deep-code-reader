@@ -303,6 +303,54 @@ commit_page = notion_mcp.create_page(
 💡 Tip: Add personal notes in the "Memo" field
 ```
 
+### Phase 6: Next Commit Suggestions
+
+After successful analysis, suggest next commits to analyze:
+
+```python
+# Get surrounding commits for context
+timeline_commits = github_mcp.list_commits(
+    owner=owner,
+    repo=repo,
+    per_page=5
+)
+
+# Filter out already analyzed commits
+analyzed_commits = serena_mcp.read_memory("analyzed_commits") or []
+unanalyzed = [c for c in timeline_commits if c["sha"] not in analyzed_commits]
+
+# Mark current commit as analyzed
+analyzed_commits.append(commit_hash)
+serena_mcp.write_memory("analyzed_commits", analyzed_commits)
+```
+
+Display suggestions:
+
+```markdown
+---
+
+🔍 Next Suggestions
+
+Recent commits from this project:
+
+1. 🆕 def5678 - Add rate limiting to API endpoints
+   📅 2025-01-14 • 👤 janedoe • ✏️ 5 files
+   /analyze-commit def5678
+
+2. 🆕 ghi9012 - Update dependencies
+   📅 2025-01-13 • 👤 maintainer • ✏️ 1 file
+   /analyze-commit ghi9012
+
+3. ✅ xyz3456 - Refactor auth module (already analyzed)
+
+💡 Commands:
+  /list-commits           # Browse all recent commits
+  /list-prs              # Browse pull requests
+  /current-oss           # Check current project
+
+Continue your learning journey! 🚀
+```
+
 ## Error Handling
 
 ### Repository Not Set
