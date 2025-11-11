@@ -267,6 +267,28 @@ Try again in: 5 minutes
 
 ---
 
+## Uninstallation
+
+If you need to remove the platform:
+
+```bash
+./uninstall.sh
+```
+
+**What it does:**
+- ✅ Scans for installed components
+- ✅ Shows what will be removed
+- ✅ Asks for confirmation before removing
+- ✅ Offers to restore config backups
+- ✅ Preserves Notion config (optional)
+
+**Safe Removal:**
+- Your Notion data is never affected
+- Claude config can be restored from backup
+- Notion credentials can be preserved for later
+
+---
+
 ## Need Help?
 
 - **Documentation**: See README.md for full details

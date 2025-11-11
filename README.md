@@ -50,6 +50,22 @@ The installer will:
 4. 🎯 Install skills and commands
 5. 🔐 Set up Notion integration (optional)
 
+### Uninstallation
+
+To safely remove all installed components:
+
+```bash
+./uninstall.sh
+```
+
+The uninstaller will:
+- 🔍 Scan for installed components
+- 📋 Show what will be removed
+- ⚠️  Ask for confirmation
+- 🔄 Offer to restore config backups
+- 💾 Preserve your Notion configuration (optional)
+- 🗑️  Clean up all files
+
 ### First Analysis (30 seconds)
 
 ```bash

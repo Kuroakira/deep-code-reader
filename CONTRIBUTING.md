@@ -43,12 +43,18 @@ We welcome contributions that:
    # Test individual scripts
    python scripts/generate_architecture_diagram.py ./test-project
    python scripts/analyze_dependencies.py ./test-project
-   
+
    # Test the complete skill
    # Upload to Claude.ai or install in Claude Code and test
    ```
 
-5. **Package and verify**
+5. **Clean up after testing** (optional)
+   ```bash
+   # Uninstall test installation
+   ./uninstall.sh
+   ```
+
+6. **Package and verify**
    ```bash
    # Requires the skill-creator tool from anthropics/skills
    python /path/to/skill-creator/scripts/package_skill.py . ./dist
