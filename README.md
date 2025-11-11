@@ -19,6 +19,7 @@ Perfect for developers who want to:
 
 ### 🤖 Intelligent Automation
 - **One-command installation** - `./install.sh` sets up everything
+- **Project context memory** - Register once, analyze many commits without repeating URLs
 - **Strategic analysis** - AI-powered analysis planning with Sequential Thinking
 - **Symbol-level understanding** - Serena MCP for semantic code comprehension
 - **Framework expertise** - Context7 MCP for official documentation patterns
@@ -55,14 +56,20 @@ The installer will:
 # Start Claude Code
 claude-code
 
-# Step 1: Register OSS repository
+# Step 1: Register OSS repository (one time only)
 /register-oss https://github.com/expressjs/express
 
-# Step 2: Analyze a commit
-/analyze-commit https://github.com/expressjs/express abc1234567
+# Step 2: Analyze commits - URL省略!
+/analyze-commit abc1234567          # Just the commit hash
+/analyze-commit def5678             # No URL needed!
+/analyze-pr 5234                    # Just the PR number
+
+# Check current project
+/current-oss
 ```
 
 **That's it!** Claude will:
+- 💾 Remember your project context (no repeated URLs!)
 - 🔄 Fetch commit information
 - 🎯 Understand WHY the change was made
 - 🏗️ Analyze impact on architecture
@@ -75,16 +82,15 @@ claude-code
 claude_skills/
 ├── install.sh                    # One-command installer
 ├── commands/                     # Slash commands
-│   ├── analyze-oss.md           # Main analysis command
-│   ├── setup-notion.md          # Notion configuration
-│   └── export-analysis.md       # Manual export
+│   ├── register-oss.md          # Register OSS repository
+│   ├── current-oss.md           # Show current project
+│   ├── analyze-commit.md        # Analyze single commit
+│   ├── analyze-pr.md            # Analyze pull request
+│   └── setup-notion.md          # Notion configuration
 ├── config/                       # Configuration files
 │   ├── mcp_servers.json         # MCP server setup
-│   ├── notion_template.json     # Notion page template
-│   └── default_settings.json    # Platform settings
-├── scripts/                      # Utilities
-│   ├── setup/                   # Installation scripts
-│   └── utils/                   # Helper functions
+│   ├── notion_config.json       # Notion database IDs
+│   └── notion_template.json     # Notion page template
 ├── skills/                       # Claude Skills
 │   └── deep-code-reader/        # Code analysis skill
 └── docs/                         # Documentation
@@ -95,16 +101,30 @@ claude_skills/
 ### Register OSS Repository
 
 ```bash
-# First time: Register the repository
+# Register once per project
 /register-oss https://github.com/expressjs/express
 
-# Creates entry in OSSリスト Notion database
+# Creates entry in OSSリスト database
+# Saves as current project in memory
+```
+
+### Check Current Project
+
+```bash
+# View currently active project
+/current-oss
+
+# Shows: Repository info, Notion page, available commands
 ```
 
 ### Analyze Commits
 
 ```bash
-# Analyze a single commit
+# After registration - URL not needed!
+/analyze-commit abc1234
+/analyze-commit def5678
+
+# Or with explicit URL (optional)
 /analyze-commit https://github.com/expressjs/express abc1234
 
 # Shows detailed analysis in console + exports to Notion
@@ -113,10 +133,25 @@ claude_skills/
 ### Analyze Pull Requests
 
 ```bash
-# Analyze all commits in a PR
+# Just the PR number!
+/analyze-pr 5234
+
+# Or with full URL (optional)
 /analyze-pr https://github.com/expressjs/express/pull/5234
 
 # Asks: analyze all commits or select specific ones
+```
+
+### Switch Between Projects
+
+```bash
+# Switch to a different project
+/register-oss https://github.com/facebook/react
+/analyze-commit xyz9012          # Now uses react repo
+
+# Switch back
+/register-oss https://github.com/expressjs/express
+/analyze-commit abc1234          # Back to express
 ```
 
 ### Notion Setup
@@ -214,7 +249,6 @@ This platform leverages powerful MCP servers:
 ## 🔧 Requirements
 
 - **Node.js** v18+ (for MCP servers)
-- **Python** 3.8+ (for analysis scripts)
 - **Claude Code** (CLI or Desktop)
 - **Notion account** (optional, for exports)
 - **GitHub account** (for analyzing private repos)
