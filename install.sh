@@ -158,7 +158,7 @@ install_mcp_servers() {
     echo "Additional MCP servers can enhance functionality."
     echo ""
     echo "Would you like to install optional MCP servers? (y/n)"
-    echo -e "${YELLOW}Note: Context7, Sequential Thinking, and Serena are built into Claude Code${NC}"
+    echo -e "${YELLOW}Note: Context7, Serena, and Playwright are automatically configured${NC}"
 
     read -r install_optional
 
@@ -370,12 +370,16 @@ EOF
     echo -e "${GREEN}✓ MCP Servers setup complete${NC}"
     echo ""
 
-    # Note about built-in MCP servers
-    echo -e "${BLUE}Built-in Claude Code MCP Servers:${NC}"
+    # Note about additional MCP servers
+    echo -e "${BLUE}Additional MCP Servers (configured automatically):${NC}"
     echo "  ✓ Context7 - Official library documentation"
-    echo "  ✓ Sequential Thinking - Multi-step reasoning"
     echo "  ✓ Serena - Semantic code understanding"
-    echo "  ${YELLOW}(No installation needed - automatically available)${NC}"
+    echo "  ✓ Playwright - Browser automation"
+    echo ""
+    echo -e "${BLUE}Claude Code Built-in Features:${NC}"
+    echo "  ✓ Sequential Thinking - Multi-step reasoning"
+    echo "  ✓ IDE Integration - Editor access"
+    echo "  ${YELLOW}(No installation or configuration needed)${NC}"
     echo ""
 }
 
