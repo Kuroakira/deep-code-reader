@@ -205,6 +205,58 @@ install_mcp_servers() {
 
             if npm install -g "$package" &> /dev/null; then
                 echo -e "  ${GREEN}✓${NC} ${name} installed successfully"
+
+                # Add to ~/.claude.json configuration
+                python3 - <<EOF
+import json
+from pathlib import Path
+
+config_path = Path.home() / ".claude.json"
+package = "$package"
+
+# Determine server name and config
+server_name = None
+server_config = {}
+
+if "github" in package:
+    server_name = "github"
+    server_config = {
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-github"],
+        "env": {
+            "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+        }
+    }
+elif "brave" in package:
+    server_name = "brave-search"
+    server_config = {
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+        "env": {
+            "BRAVE_API_KEY": ""
+        }
+    }
+
+if server_name:
+    try:
+        if config_path.exists():
+            with open(config_path, 'r') as f:
+                config = json.load(f)
+        else:
+            config = {}
+
+        if 'mcpServers' not in config:
+            config['mcpServers'] = {}
+
+        config['mcpServers'][server_name] = server_config
+
+        with open(config_path, 'w') as f:
+            json.dump(config, f, indent=2)
+
+        print(f"    Configured {server_name} in ~/.claude.json")
+    except Exception as e:
+        print(f"    Warning: Failed to configure {server_name}: {e}")
+EOF
             else
                 echo -e "  ${RED}✗${NC} ${name} installation failed"
             fi
@@ -244,7 +296,74 @@ install_mcp_servers() {
             echo "  - $name (globally installed but not configured)"
         done
         echo ""
-        echo "These will be configured in the Notion setup step."
+        echo "Adding configurations to ~/.claude.json..."
+        echo ""
+
+        # Add configurations for globally installed but not configured servers
+        for server_info in "${needs_config[@]}"; do
+            IFS=':' read -r package name <<< "$server_info"
+            echo -e "  Configuring ${BLUE}${name}${NC}..."
+
+            python3 - <<EOF
+import json
+from pathlib import Path
+
+config_path = Path.home() / ".claude.json"
+package = "$package"
+
+# Determine server name and config
+server_name = None
+server_config = {}
+
+if "github" in package:
+    server_name = "github"
+    server_config = {
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-github"],
+        "env": {
+            "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+        }
+    }
+elif "brave" in package:
+    server_name = "brave-search"
+    server_config = {
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+        "env": {
+            "BRAVE_API_KEY": ""
+        }
+    }
+elif "notion" in package:
+    server_name = "notion"
+    server_config = {
+        "command": "npx",
+        "args": ["-y", "@notionhq/notion-mcp-server"],
+        "env": {
+            "NOTION_API_KEY": ""
+        }
+    }
+
+if server_name:
+    try:
+        if config_path.exists():
+            with open(config_path, 'r') as f:
+                config = json.load(f)
+        else:
+            config = {}
+
+        if 'mcpServers' not in config:
+            config['mcpServers'] = {}
+
+        config['mcpServers'][server_name] = server_config
+
+        with open(config_path, 'w') as f:
+            json.dump(config, f, indent=2)
+
+        print(f"✓ Configured {server_name}")
+    except Exception as e:
+        print(f"✗ Failed to configure {server_name}: {e}")
+EOF
+        done
         echo ""
     fi
 
