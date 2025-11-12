@@ -255,15 +255,66 @@ This allows users to omit URLs in subsequent commands:
 - `/analyze-commit <hash>` - Uses local clone for deep analysis
 - `/analyze-pr <number>` - Uses local clone for PR analysis
 
-### Step 8: Confirm Success
+### Step 8: Get Initial Commit and First PR
 
-Return to user:
+Find the repository's initial commit and first PR to guide the user:
+
+```python
+# Get the initial commit (oldest commit in the repository)
+try:
+    # Use git log to get the very first commit
+    result = subprocess.run(
+        ["git", "rev-list", "--max-parents=0", "HEAD"],
+        cwd=local_repo_path,
+        capture_output=True,
+        text=True,
+        timeout=10
+    )
+
+    if result.returncode == 0 and result.stdout.strip():
+        initial_commit_sha = result.stdout.strip().split('\n')[0]
+        initial_commit_short = initial_commit_sha[:7]
+
+        # Get commit message for better context
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%s", initial_commit_sha],
+            cwd=local_repo_path,
+            capture_output=True,
+            text=True
+        )
+        initial_commit_msg = result.stdout.strip() if result.returncode == 0 else ""
+    else:
+        initial_commit_short = None
+        initial_commit_msg = ""
+except Exception as e:
+    print(f"⚠️  Could not fetch initial commit: {e}")
+    initial_commit_short = None
+    initial_commit_msg = ""
+
+# Get the first PR (PR #1)
+try:
+    first_pr = github_mcp.get_pull_request(
+        owner=owner,
+        repo=repo,
+        pull_number=1
+    )
+    first_pr_exists = True
+    first_pr_title = first_pr.get("title", "")
+except Exception:
+    first_pr_exists = False
+    first_pr_title = ""
+```
+
+### Step 9: Confirm Success with Next Steps
+
+Return to user with specific next actions:
+
 ```markdown
 ✅ OSS Repository Registered!
 
 📦 Project: Express.js
 🔗 GitHub: https://github.com/expressjs/express
-📄 Notion Page: https://notion.so/your-oss-page-id
+📄 Notion Page: https://notion.so/Express-js-abc123
 💾 Commits & PRs Database: Created inline on the OSS page
 📁 Local Clone: ~/.claude/deep-code-reader/repos/expressjs/express
 
@@ -274,16 +325,73 @@ The repository has been cloned locally, enabling:
 - Symbol-level dependency tracking
 - Full file content access without API limits
 
-💡 Next steps:
-- Check current project: /current-oss
-- List oldest commits: /list-commits
-- Analyze first commit (deep analysis enabled!):
-  /analyze-commit f7c8d10
-- Analyze PR with full context:
-  /analyze-pr 1
-- View in Notion: Open the OSS page to see all commits/PRs
+---
 
-🚀 Start your learning journey from the very first commit!
+🚀 **Start Your Learning Journey!**
+
+**Option 1: Analyze from the very first commit**
+```
+/analyze-commit {initial_commit_short}
+```
+📝 Initial commit: {initial_commit_msg}
+
+**Option 2: Analyze from the first PR**
+```
+/analyze-pr 1
+```
+{first_pr_title if first_pr_exists else "ℹ️  Check /list-prs to find the first available PR"}
+
+**Browse available content:**
+- List oldest commits: `/list-commits`
+- List oldest PRs: `/list-prs`
+- Check current project: `/current-oss`
+
+💡 Recommended: Start with the initial commit to understand how the project began!
+
+📄 View in Notion: {notion_page_url}
+```
+
+**Example output**:
+```markdown
+✅ OSS Repository Registered!
+
+📦 Project: NestJS
+🔗 GitHub: https://github.com/nestjs/nest
+📄 Notion Page: https://www.notion.so/NestJS-2a9c3130714381d89a34d421343ab43b
+💾 Commits & PRs Database: Created inline on the OSS page
+📁 Local Clone: ~/.claude/deep-code-reader/repos/nestjs/nest
+
+🎯 Ready for Deep Code Analysis!
+
+The repository has been cloned locally, enabling:
+- Line-by-line code analysis with Serena MCP
+- Symbol-level dependency tracking
+- Full file content access without API limits
+
+---
+
+🚀 **Start Your Learning Journey!**
+
+**Option 1: Analyze from the very first commit**
+```
+/analyze-commit f7c8d10
+```
+📝 Initial commit: feat(core): initial commit
+
+**Option 2: Analyze from the first PR**
+```
+/analyze-pr 1
+```
+📝 Add middleware support and error handling
+
+**Browse available content:**
+- List oldest commits: `/list-commits`
+- List oldest PRs: `/list-prs`
+- Check current project: `/current-oss`
+
+💡 Recommended: Start with the initial commit to understand how the project began!
+
+📄 View in Notion: https://www.notion.so/NestJS-2a9c3130714381d89a34d421343ab43b
 ```
 
 ## Error Handling
