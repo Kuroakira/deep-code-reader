@@ -49,15 +49,50 @@ Get repository information:
 repo_info = github_mcp.get_repository(owner, repo_name)
 ```
 
-### Step 4: Create Commits & PRs Database for this OSS
+### Step 4: Create Notion Page in OSSリスト
 
-Create a dedicated database for this OSS repository's commits and PRs:
+**IMPORTANT**: Create the OSS page FIRST, then create the Commits & PRs database inside it.
+
+Create entry in "OSSリスト" database:
+
+**Properties**:
+- **Name** (title): Project name (e.g., "Express.js")
+- **GitHub URL** (url): Repository URL
+- **Description** (rich_text): Repository description
+- **Language** (select): Primary language
+- **Stars** (number): Star count
+
+**Content** (optional):
+```markdown
+# {Project Name}
+
+{Description}
+
+## Repository Info
+- Language: {primary_language}
+- Stars: {stars_count}
+- Last Updated: {last_commit_date}
+
+## Registered
+- Date: {today}
+- Status: Ready for analysis
+```
+
+### Step 5: Create Commits & PRs Database INSIDE the OSS Page
+
+**CRITICAL**: Use the page ID from Step 4 as the parent!
+
+Create an **inline database** inside the OSS page:
 
 Use Notion MCP `create_database`:
 ```json
 {
-  "parent_page_id": "<workspace_page_id>",
-  "title": "{OSS Name} - Commits & PRs",
+  "parent": {
+    "type": "page_id",
+    "page_id": "<oss_page_id_from_step_4>"
+  },
+  "is_inline": true,
+  "title": [{"type": "text", "text": {"content": "{OSS Name} - Commits & PRs"}}],
   "properties": {
     "Title": {"title": {}},
     "Type": {
@@ -78,34 +113,11 @@ Use Notion MCP `create_database`:
 }
 ```
 
-Save the database ID and URL for later use.
+**Note**: The database will appear inline on the OSS page, not as a separate full-page database.
 
-### Step 5: Create Notion Page in OSSリスト
+Save the database ID for later use.
 
-Create entry in "OSSリスト" database:
-
-**Properties**:
-- **Name** (title): Project name (e.g., "Express.js")
-- **GitHub URL** (url): Repository URL
-- **Commits DB** (url): URL to the Commits & PRs database created in Step 4
-
-**Content** (optional):
-```markdown
-# {Project Name}
-
-{Description}
-
-## Repository Info
-- Language: {primary_language}
-- Stars: {stars_count}
-- Last Updated: {last_commit_date}
-
-## Registered
-- Date: {today}
-- Status: Ready for analysis
-```
-
-### Step 6: Save to Memory (use Serena MCP)
+### Step 6: Save to Memory
 
 Save current OSS project information to memory, including the commits database ID:
 
@@ -135,14 +147,14 @@ Return to user:
 📦 Project: Express.js
 🔗 GitHub: https://github.com/expressjs/express
 📄 Notion Page: https://notion.so/your-oss-page-id
-💾 Commits DB: https://notion.so/your-commits-db-id
+💾 Commits & PRs Database: Created inline on the OSS page
 
 💡 Next steps:
 - Check current project: /current-oss
 - Analyze commits: /analyze-commit <commit-hash>  ⬅️ URL not needed!
-- Commits will be saved to the dedicated "Express.js - Commits & PRs" database
+- Commits will be saved to the inline "Express.js - Commits & PRs" database
 - Analyze PR: /analyze-pr <pr-number>
-- View in Notion: [link]
+- View in Notion: Open the OSS page to see all commits/PRs
 ```
 
 ## Error Handling
@@ -278,6 +290,7 @@ Steps to fix:
 ⭐ **Stars**: 65,234
 💻 **Language**: JavaScript
 📄 **Notion Page**: https://notion.so/Express-js-abc123
+💾 **Commits & PRs Database**: Inline on the OSS page
 
 💾 **Saved as current project** - URL no longer needed for analysis!
 
@@ -294,6 +307,7 @@ Analyze a PR (URL optional!):
 
 View in Notion:
 https://notion.so/Express-js-abc123
+(Open the page to see the inline Commits & PRs database)
 ```
 
 ### Success (Already Exists)

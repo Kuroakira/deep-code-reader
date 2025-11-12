@@ -146,8 +146,12 @@ Creating master database for OSS repositories...
 Use Notion MCP `create_database` with:
 ```json
 {
-  "parent_page_id": "<workspace_page_id>",
-  "title": "OSSリスト",
+  "parent": {
+    "type": "page_id",
+    "page_id": "<workspace_page_id>"
+  },
+  "is_inline": true,
+  "title": [{"type": "text", "text": {"content": "OSSリスト"}}],
   "properties": {
     "Name": {
       "title": {}
@@ -166,6 +170,8 @@ Use Notion MCP `create_database` with:
           {"name": "TypeScript", "color": "blue"},
           {"name": "Go", "color": "green"},
           {"name": "Rust", "color": "orange"},
+          {"name": "Java", "color": "red"},
+          {"name": "C++", "color": "purple"},
           {"name": "Other", "color": "gray"}
         ]
       }
@@ -173,15 +179,16 @@ Use Notion MCP `create_database` with:
     "Stars": {
       "number": {}
     },
-    "Commits DB": {
-      "url": {}
-    },
     "Created": {
       "created_time": {}
     }
   }
 }
 ```
+
+**Note**:
+- The database is created as **inline** (`is_inline: true`)
+- **Commits DB** property is removed - each OSS page will have its own inline Commits & PRs database
 
 **Note**: Individual "Commits & PRs" databases will be created automatically when you register each OSS repository using `/register-oss`.
 
