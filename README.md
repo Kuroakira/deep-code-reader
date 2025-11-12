@@ -145,6 +145,7 @@ python3 ~/.claude/deep-code-reader/scripts/update_notion_mcp.py <api_key>
 ```
 deep-code-reader/
 ├── install.sh                    # One-command installer
+├── uninstall.sh                  # Clean uninstaller
 ├── commands/                     # Slash commands
 │   ├── register-oss.md          # Register OSS repository
 │   ├── current-oss.md           # Show current project
@@ -153,11 +154,71 @@ deep-code-reader/
 │   └── setup-notion.md          # Notion configuration
 ├── config/                       # Configuration files
 │   ├── mcp_servers.json         # MCP server setup
-│   ├── notion_config.json       # Notion database IDs
 │   └── notion_template.json     # Notion page template
+├── scripts/                      # Utility scripts
+│   ├── update_notion_mcp.py     # Notion config updater
+│   └── utils/                   # Helper utilities
 ├── skills/                       # Claude Skills
 │   └── deep-code-reader/        # Code analysis skill
 └── docs/                         # Documentation
+```
+
+## 📦 Installed Files
+
+After running `./install.sh`, the following files are created in your home directory:
+
+```
+~/.claude/
+├── deep-code-reader/            # Project-specific files
+│   ├── notion_config.json       # Notion integration settings
+│   │                            # - API key
+│   │                            # - Workspace page ID
+│   │                            # - Database IDs
+│   │                            # - Auto-export settings
+│   └── scripts/                 # Utility scripts
+│       ├── update_notion_mcp.py # Update Notion config
+│       └── utils/               # Helper modules
+│
+├── commands/                    # Slash commands (copied from repo)
+│   ├── register-oss.md
+│   ├── current-oss.md
+│   ├── analyze-commit.md
+│   ├── analyze-pr.md
+│   ├── list-commits.md
+│   ├── list-prs.md
+│   ├── setup-notion.md
+│   └── export-analysis.md
+│
+└── skills/                      # Claude Skills (copied from repo)
+    └── deep-code-reader/        # Analysis skill
+
+~/.claude.json                   # Claude Code CLI configuration
+                                 # - MCP server settings (GitHub, Notion)
+                                 # - Notion API token
+```
+
+**Important Notes:**
+- `~/.claude/deep-code-reader/` - **Only modified by this project**
+  - Safe to backup/restore
+  - Contains all project-specific settings
+  - Updated by `/setup-notion` and utility scripts
+
+- `~/.claude.json` - **Shared by all Claude Code projects**
+  - Modified during installation (adds Notion MCP server)
+  - Backed up automatically before changes
+  - Restored during uninstallation (optional)
+
+- `~/.claude/commands/` and `~/.claude/skills/` - **Shared resources**
+  - May contain commands/skills from other projects
+  - Uninstaller only removes files from this project
+
+**Backup Recommendation:**
+```bash
+# Before installation
+cp ~/.claude.json ~/.claude.json.backup
+
+# Or use the built-in backup during uninstall
+./uninstall.sh  # Offers to restore backups
 ```
 
 ## 🎯 Usage Examples
