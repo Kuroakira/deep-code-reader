@@ -117,28 +117,145 @@ Use Notion MCP `create_database`:
 
 Save the database ID for later use.
 
-### Step 6: Save to Memory
+### Step 6: Clone Repository Locally
 
-Save current OSS project information to memory, including the commits database ID:
+**IMPORTANT**: Clone the repository for deep code analysis with Serena MCP.
 
 ```python
-# Save current OSS context including commits database info
+import os
+import subprocess
+from pathlib import Path
+
+# Determine clone directory
+home = Path.home()
+repos_dir = home / ".claude" / "deep-code-reader" / "repos"
+local_repo_path = repos_dir / owner / repo
+
+# Create repos directory if it doesn't exist
+repos_dir.mkdir(parents=True, exist_ok=True)
+
+# Check if already cloned
+if (local_repo_path / ".git").exists():
+    print(f"✅ Repository already cloned: {local_repo_path}")
+
+    # Optional: Pull latest changes
+    try:
+        result = subprocess.run(
+            ["git", "fetch", "--all"],
+            cwd=local_repo_path,
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+        print(f"📥 Fetched latest changes")
+    except Exception as e:
+        print(f"⚠️  Could not fetch updates: {e}")
+
+else:
+    # Clone the repository
+    print(f"📥 Cloning repository to: {local_repo_path}")
+
+    try:
+        # Create owner directory
+        (repos_dir / owner).mkdir(parents=True, exist_ok=True)
+
+        # Clone with progress
+        result = subprocess.run(
+            ["git", "clone", repo_url, str(local_repo_path)],
+            capture_output=True,
+            text=True,
+            timeout=300  # 5 minute timeout
+        )
+
+        if result.returncode == 0:
+            print(f"✅ Successfully cloned repository")
+            print(f"📁 Location: {local_repo_path}")
+        else:
+            print(f"❌ Clone failed: {result.stderr}")
+            # Continue without local clone - analysis will use GitHub API only
+            local_repo_path = None
+
+    except subprocess.TimeoutExpired:
+        print(f"⚠️  Clone timeout (large repository)")
+        print(f"   You can manually clone to: {local_repo_path}")
+        local_repo_path = None
+
+    except Exception as e:
+        print(f"❌ Clone error: {e}")
+        local_repo_path = None
+
+# Store the path (even if None - indicates clone failed)
+local_repo_path_str = str(local_repo_path) if local_repo_path else None
+```
+
+**Clone Benefits**:
+- Enables deep code analysis with Serena MCP
+- Line-by-line code reading in analyze-commit
+- Symbol-level dependency tracking
+- Full file content access without API limits
+
+**If Clone Fails**:
+- Analysis will still work using GitHub API
+- Some features may be limited
+- Manual clone recommended for deep analysis
+
+### Step 7: Save to Memory
+
+Save current OSS project information to memory, including the commits database ID and local clone path:
+
+```python
+# Save current OSS context including commits database info AND local clone path
 serena_mcp.write_memory("current_oss", {
     "repo_url": repo_url,
     "owner": owner,
     "repo": repo_name,
     "notion_page_id": notion_page_id,
-    "commits_database_id": commits_db_id,  # NEW: OSS-specific commits DB
-    "commits_database_url": commits_db_url,  # NEW: For easy access
+    "commits_database_id": commits_db_id,
+    "commits_database_url": commits_db_url,
+    "local_repo_path": local_repo_path_str,  # NEW: Path to local clone
     "registered_at": current_timestamp
 })
 ```
 
-This allows users to omit URLs in subsequent commands:
-- `/analyze-commit <hash>` instead of `/analyze-commit <url> <hash>`
-- `/analyze-pr <number>` instead of `/analyze-pr <url>/pull/<number>`
+Also save to JSON file for persistence:
 
-### Step 7: Confirm Success
+```python
+import json
+from pathlib import Path
+
+# Save to ~/.claude/deep-code-reader/current_oss.json
+config_dir = Path.home() / ".claude" / "deep-code-reader"
+config_file = config_dir / "current_oss.json"
+
+current_oss_data = {
+    "repo_url": repo_url,
+    "owner": owner,
+    "repo": repo_name,
+    "notion_page_id": notion_page_id,
+    "notion_page_url": notion_page_url,
+    "commits_database_id": commits_db_id,
+    "commits_database_url": commits_db_url,
+    "local_repo_path": local_repo_path_str,
+    "project_name": project_name,
+    "description": description,
+    "language": primary_language,
+    "stars": stars_count,
+    "last_updated": last_commit_date,
+    "registered_at": current_timestamp,
+    "status": "active"
+}
+
+with open(config_file, 'w') as f:
+    json.dump(current_oss_data, f, indent=2)
+
+print(f"💾 Saved configuration to: {config_file}")
+```
+
+This allows users to omit URLs in subsequent commands:
+- `/analyze-commit <hash>` - Uses local clone for deep analysis
+- `/analyze-pr <number>` - Uses local clone for PR analysis
+
+### Step 8: Confirm Success
 
 Return to user:
 ```markdown
@@ -148,13 +265,25 @@ Return to user:
 🔗 GitHub: https://github.com/expressjs/express
 📄 Notion Page: https://notion.so/your-oss-page-id
 💾 Commits & PRs Database: Created inline on the OSS page
+📁 Local Clone: ~/.claude/deep-code-reader/repos/expressjs/express
+
+🎯 Ready for Deep Code Analysis!
+
+The repository has been cloned locally, enabling:
+- Line-by-line code analysis with Serena MCP
+- Symbol-level dependency tracking
+- Full file content access without API limits
 
 💡 Next steps:
 - Check current project: /current-oss
-- Analyze commits: /analyze-commit <commit-hash>  ⬅️ URL not needed!
-- Commits will be saved to the inline "Express.js - Commits & PRs" database
-- Analyze PR: /analyze-pr <pr-number>
+- List oldest commits: /list-commits
+- Analyze first commit (deep analysis enabled!):
+  /analyze-commit f7c8d10
+- Analyze PR with full context:
+  /analyze-pr 1
 - View in Notion: Open the OSS page to see all commits/PRs
+
+🚀 Start your learning journey from the very first commit!
 ```
 
 ## Error Handling

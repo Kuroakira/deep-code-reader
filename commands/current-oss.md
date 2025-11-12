@@ -35,6 +35,8 @@ The memory contains:
   "owner": "owner",
   "repo": "repo",
   "notion_page_id": "abc123...",
+  "commits_database_id": "def456...",
+  "local_repo_path": "~/.claude/deep-code-reader/repos/owner/repo",
   "registered_at": "2025-01-15T10:30:00Z"
 }
 ```
@@ -57,6 +59,7 @@ notion_page = notion_mcp.get_page(notion_page_id)
 Repository: {owner}/{repo}
 GitHub: {repo_url}
 Notion: {notion_page_url}
+Local Clone: {local_repo_path}
 
 Description: {repo_description}
 Language: {primary_language}
@@ -65,9 +68,15 @@ Last Updated: {updated_at}
 
 Registered: {registered_at}
 
+🎯 Deep Analysis Features:
+  ✅ Line-by-line code analysis (Serena MCP)
+  ✅ Symbol-level dependency tracking
+  ✅ Full file content access
+
 💡 Commands available:
-  /analyze-commit <commit-hash>
-  /analyze-pr <pr-number>
+  /list-commits           # List oldest commits first
+  /analyze-commit <hash>  # Deep analysis with Serena
+  /analyze-pr <number>    # PR analysis with context
 
 To switch projects:
   /register-oss <new-url>
@@ -83,6 +92,7 @@ To switch projects:
 Repository: expressjs/express
 GitHub: https://github.com/expressjs/express
 Notion: https://notion.so/Express-js-abc123
+Local Clone: ~/.claude/deep-code-reader/repos/expressjs/express
 
 Description: Fast, unopinionated, minimalist web framework
 Language: JavaScript
@@ -91,9 +101,15 @@ Last Updated: 2025-01-15
 
 Registered: 2025-01-10 10:30
 
+🎯 Deep Analysis Features:
+  ✅ Line-by-line code analysis (Serena MCP)
+  ✅ Symbol-level dependency tracking
+  ✅ Full file content access
+
 💡 You can now analyze commits without specifying the URL:
-  /analyze-commit abc1234
-  /analyze-pr 5234
+  /list-commits           # Browse from the beginning
+  /analyze-commit abc1234 # Deep analysis enabled
+  /analyze-pr 5234        # Full PR context
 
 To switch to a different project:
   /register-oss <new-url>
