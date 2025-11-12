@@ -548,58 +548,50 @@ install_scripts() {
 setup_notion() {
     echo -e "${YELLOW}[7/7] Notion Integration Setup...${NC}"
     echo ""
-    echo -e "${BLUE}Notion Integration (Optional but Recommended)${NC}"
+    echo -e "${BLUE}Notion Integration (Required)${NC}"
     echo ""
     echo "Notion integration enables:"
     echo "  • Automatic export of code analysis results"
     echo "  • Organized repository and commit tracking"
     echo "  • Team collaboration and knowledge sharing"
     echo ""
-    echo -e "${BLUE}Setup Notion integration now? (y/n)${NC}"
-    read -r setup_notion_now
+    echo "╔════════════════════════════════════════════╗"
+    echo "║   Notion Integration Setup                ║"
+    echo "╚════════════════════════════════════════════╝"
+    echo ""
+    echo "📝 Step 1: Create Notion Integration"
+    echo ""
+    echo "1. Open in browser: https://www.notion.so/profile/integrations"
+    echo "2. Click 'New integration' or '+ Create new integration'"
+    echo "3. Name it: 'Deep Code Reader' (or your choice)"
+    echo "4. Select your workspace"
+    echo "5. Capabilities needed:"
+    echo "   ✓ Read content"
+    echo "   ✓ Update content"
+    echo "   ✓ Insert content"
+    echo "6. Click 'Submit'"
+    echo "7. Copy the 'Internal Integration Secret'"
+    echo ""
+    echo "The token should start with 'secret_' or 'ntn_'"
+    echo ""
+    read -p "Enter your Notion API Key: " NOTION_KEY
 
-    if [[ "$setup_notion_now" =~ ^[Yy]$ ]]; then
-        echo ""
-        echo "╔════════════════════════════════════════════╗"
-        echo "║   Notion Integration Setup                ║"
-        echo "╚════════════════════════════════════════════╝"
-        echo ""
-        echo "📝 Step 1: Create Notion Integration"
-        echo ""
-        echo "1. Open in browser: https://www.notion.so/profile/integrations"
-        echo "2. Click 'New integration' or '+ Create new integration'"
-        echo "3. Name it: 'Deep Code Reader' (or your choice)"
-        echo "4. Select your workspace"
-        echo "5. Capabilities needed:"
-        echo "   ✓ Read content"
-        echo "   ✓ Update content"
-        echo "   ✓ Insert content"
-        echo "6. Click 'Submit'"
-        echo "7. Copy the 'Internal Integration Secret'"
-        echo ""
-        echo "The token should start with 'secret_' or 'ntn_'"
-        echo ""
-        read -p "Enter your Notion API Key: " NOTION_KEY
-
-        # Validate API key format
-        if [[ ! "$NOTION_KEY" =~ ^(secret_|ntn_) ]]; then
+    # Validate API key format
+    while [[ ! "$NOTION_KEY" =~ ^(secret_|ntn_) ]] || [ -z "$NOTION_KEY" ]; do
+        if [ -n "$NOTION_KEY" ]; then
             echo ""
-            echo -e "${YELLOW}⚠ Warning: API key doesn't match expected format${NC}"
+            echo -e "${RED}✗ Invalid API key format${NC}"
             echo "Expected: secret_xxx... or ntn_xxx..."
             echo "Got: ${NOTION_KEY:0:10}..."
             echo ""
-            echo -e "${BLUE}Continue anyway? (y/n)${NC}"
-            read -r continue_anyway
-            if [[ ! "$continue_anyway" =~ ^[Yy]$ ]]; then
-                echo -e "${YELLOW}⚠ Skipping Notion setup${NC}"
-                NOTION_KEY=""
-            fi
         fi
+        read -p "Enter your Notion API Key (or press Ctrl+C to exit): " NOTION_KEY
+    done
 
-        if [ -n "$NOTION_KEY" ]; then
-            # Save config to deep-code-reader directory
-            mkdir -p "$HOME/.claude/deep-code-reader"
-            cat > "$HOME/.claude/deep-code-reader/notion_config.json" <<EOF
+    if [ -n "$NOTION_KEY" ]; then
+        # Save config to deep-code-reader directory
+        mkdir -p "$HOME/.claude/deep-code-reader"
+        cat > "$HOME/.claude/deep-code-reader/notion_config.json" <<EOF
 {
   "api_key": "$NOTION_KEY",
   "workspace_page_id": "",
@@ -609,17 +601,17 @@ setup_notion() {
 }
 EOF
 
-            echo ""
-            echo -e "${GREEN}✓${NC} Notion API key saved to ~/.claude/deep-code-reader/notion_config.json"
-            echo ""
+        echo ""
+        echo -e "${GREEN}✓${NC} Notion API key saved to ~/.claude/deep-code-reader/notion_config.json"
+        echo ""
 
-            # Update MCP configurations
-            echo "📝 Step 2: Configuring MCP Server..."
-            echo ""
+        # Update MCP configurations
+        echo "📝 Step 2: Configuring MCP Server..."
+        echo ""
 
-            # Configure Notion MCP by updating ~/.claude.json
-            echo "  • Adding Notion MCP server to Claude Code CLI..."
-            python3 - <<EOF
+        # Configure Notion MCP by updating ~/.claude.json
+        echo "  • Adding Notion MCP server to Claude Code CLI..."
+        python3 - <<EOF
 import json
 from pathlib import Path
 
@@ -658,66 +650,43 @@ except Exception as e:
     exit(1)
 EOF
 
-            if [ $? -eq 0 ]; then
-                echo ""
-                echo -e "${GREEN}✓${NC} MCP configuration completed successfully"
-                echo ""
-                echo "╔════════════════════════════════════════════╗"
-                echo "║   Initial Setup Complete!                 ║"
-                echo "╚════════════════════════════════════════════╝"
-                echo ""
-                echo -e "${GREEN}✅ What's been configured:${NC}"
-                echo "  ✓ Notion API key saved to ~/.claude/deep-code-reader/"
-                echo "  ✓ Notion MCP server added to Claude Code CLI"
-                echo ""
-                echo -e "${YELLOW}📝 Next Steps (after installation):${NC}"
-                echo "  1. Grant integration access to a workspace page:"
-                echo "     • Go to: https://www.notion.so/profile/integrations"
-                echo "     • Click on your integration"
-                echo "     • Click 'アクセス' (Access) tab"
-                echo "     • Click 'アクセス権限を編集'"
-                echo "     • Select a page to use as workspace"
-                echo ""
-                echo "  2. Start Claude Code: claude-code"
-                echo "  3. Run: /setup-notion"
-                echo "  4. The wizard will:"
-                echo "     • Ask for workspace page URL"
-                echo "     • Automatically create databases"
-                echo "     • Complete the setup"
-                echo ""
-            else
-                echo ""
-                echo -e "${RED}✗${NC} Failed to configure MCP server"
-                echo ""
-                echo -e "${YELLOW}You can add it manually later:${NC}"
-                echo "  1. Start Claude Code and run: /mcp"
-                echo "  2. Select 'Add Server' and choose Notion"
-                echo "  3. Configure API key in ~/.claude.json"
-                echo ""
-            fi
+        if [ $? -eq 0 ]; then
+            echo ""
+            echo -e "${GREEN}✓${NC} MCP configuration completed successfully"
+            echo ""
+            echo "╔════════════════════════════════════════════╗"
+            echo "║   Initial Setup Complete!                 ║"
+            echo "╚════════════════════════════════════════════╝"
+            echo ""
+            echo -e "${GREEN}✅ What's been configured:${NC}"
+            echo "  ✓ Notion API key saved to ~/.claude/deep-code-reader/"
+            echo "  ✓ Notion MCP server added to Claude Code CLI"
+            echo ""
+            echo -e "${YELLOW}📝 Next Steps (after installation):${NC}"
+            echo "  1. Grant integration access to a workspace page:"
+            echo "     • Go to: https://www.notion.so/profile/integrations"
+            echo "     • Click on your integration"
+            echo "     • Click 'アクセス' (Access) tab"
+            echo "     • Click 'アクセス権限を編集'"
+            echo "     • Select a page to use as workspace"
+            echo ""
+            echo "  2. Start Claude Code: claude-code"
+            echo "  3. Run: /setup-notion"
+            echo "  4. The wizard will:"
+            echo "     • Ask for workspace page URL"
+            echo "     • Automatically create databases"
+            echo "     • Complete the setup"
+            echo ""
+        else
+            echo ""
+            echo -e "${RED}✗${NC} Failed to configure MCP server"
+            echo ""
+            echo -e "${YELLOW}You can add it manually later:${NC}"
+            echo "  1. Start Claude Code and run: /mcp"
+            echo "  2. Select 'Add Server' and choose Notion"
+            echo "  3. Configure API key in ~/.claude.json"
+            echo ""
         fi
-    else
-        echo -e "  ${YELLOW}⚠${NC} Skipping Notion setup"
-
-        # Create empty config in deep-code-reader directory
-        mkdir -p "$HOME/.claude/deep-code-reader"
-        cat > "$HOME/.claude/deep-code-reader/notion_config.json" <<EOF
-{
-  "api_key": "",
-  "workspace_page_id": "",
-  "oss_database_id": "",
-  "auto_export": false,
-  "setup_complete": false
-}
-EOF
-
-        echo ""
-        echo -e "${BLUE}ℹ${NC} To set up Notion later:"
-        echo "  1. Get API key: https://www.notion.so/my-integrations"
-        echo "  2. Run: python3 ~/.claude/deep-code-reader/scripts/update_notion_mcp.py <api_key>"
-        echo "  3. Restart Claude Code"
-        echo "  4. Run: /setup-notion"
-        echo ""
     fi
 
     echo ""
@@ -753,19 +722,17 @@ verify_installation() {
 
     if [ "$NOTION_CONFIGURED" = true ]; then
         echo "  2. Complete Notion setup: /setup-notion"
-        echo "     (Notion API key already configured)"
         echo ""
-        echo -e "${GREEN}✓ Notion MCP ready!${NC}"
+        echo -e "${GREEN}✓ Notion API key configured!${NC}"
         echo "  The /setup-notion wizard will:"
         echo "  • Ask for workspace page URL"
         echo "  • Automatically create databases"
         echo "  • Complete integration"
     else
-        echo "  2. (Optional) Set up Notion later:"
-        echo "     - Get API key: https://www.notion.so/my-integrations"
-        echo "     - Run: python3 ~/.claude/deep-code-reader/scripts/update_notion_mcp.py <api_key>"
-        echo "     - Restart Claude Code"
-        echo "     - Run: /setup-notion"
+        echo "  2. Complete Notion setup: /setup-notion"
+        echo ""
+        echo -e "${YELLOW}⚠ Notion API key not configured${NC}"
+        echo "  Please run the installer again or configure manually."
     fi
 
     echo ""

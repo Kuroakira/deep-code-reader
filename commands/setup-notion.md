@@ -65,40 +65,37 @@ Validate the API key:
 - Should be around 50 characters
 - Save to config and update Claude Code configuration
 
-**IMPORTANT: Update Claude Configuration**
+**Note: Notion MCP Server Configuration**
 
-After getting the API key, IMMEDIATELY run this script to update both Claude configurations:
+The Notion MCP server should already be configured in Claude Code during installation (`install.sh`).
+This setup wizard only configures the **workspace and database settings** specific to deep-code-reader.
+
+If you need to update the Notion API key in your project configuration:
 
 ```bash
 python3 ~/.claude/deep-code-reader/scripts/update_notion_mcp.py "<notion_api_key>"
 ```
 
-This will update:
-1. **Claude Desktop**: `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `~/.config/Claude/claude_desktop_config.json` (Linux)
-2. **Claude Code CLI**: `~/.claude/.mcp.json`
-
-Both configurations will have `NOTION_TOKEN` set in the Notion MCP server environment variables.
+This will update: `~/.claude/deep-code-reader/notion_config.json`
 
 **Expected output:**
 ```
-Updating Notion API key in Claude configurations...
+Updating Notion API key in deep-code-reader configuration...
 
-✓ Updated: /Users/.../Claude/claude_desktop_config.json
-✓ Updated: /Users/.../.claude/.mcp.json
+✓ Updated: /Users/.../. claude/deep-code-reader/notion_config.json
 
-✅ Successfully updated 2 configuration(s)
+✅ Successfully updated Notion configuration
 
-⚠️  IMPORTANT: Restart Claude Code for changes to take effect
+📝 Next Steps:
+  1. Run Claude Code: claude-code
+  2. Run: /setup-notion
+  3. Complete the setup wizard
 ```
 
-**CRITICAL: Ask user to restart Claude Code**
-- This is REQUIRED for MCP changes to take effect
-- After restart, Notion MCP server will be available
-
-**Verification after restart:**
-- Use `listMcpResources` to check if "notion" server is listed
-- Try a simple Notion MCP operation to test connection
-- If not available, check logs and provide troubleshooting
+**No Restart Required**
+- The Notion MCP server is already running (configured via install.sh)
+- This wizard only updates project-specific settings
+- Changes take effect immediately
 
 ### Step 3: Grant Integration Access
 
