@@ -5,7 +5,7 @@ description: Register an OSS repository in Notion database for tracking
 
 # Register OSS Repository
 
-Register a GitHub repository in your Notion "OSSリスト" database to start tracking commits and PRs.
+Register a GitHub repository in your Notion "OSS List" database to start tracking commits and PRs.
 
 ## Usage
 
@@ -29,7 +29,7 @@ Extract repository information:
 
 ### Step 2: Check for Existing Entry
 
-Search Notion "OSSリスト" database:
+Search Notion "OSS List" database:
 1. Query by GitHub URL
 2. If found → Return existing page ID
 3. If not found → Proceed to create
@@ -49,11 +49,11 @@ Get repository information:
 repo_info = github_mcp.get_repository(owner, repo_name)
 ```
 
-### Step 4: Create Notion Page in OSSリスト
+### Step 4: Create Notion Page in OSS List
 
 **IMPORTANT**: Create the OSS page FIRST, then create the Commits & PRs database inside it.
 
-Create entry in "OSSリスト" database:
+Create entry in "OSS List" database:
 
 **Properties**:
 - **Name** (title): Project name (e.g., "Express.js")
@@ -466,8 +466,8 @@ Quick Setup:
   2. The wizard will:
      • Guide you through creating Notion integration
      • Help you share a workspace page
-     • Automatically create OSSリスト database
-     • Automatically create Commit & PRリスト database
+     • Automatically create OSS List database
+     • Automatically create Commits & PRs database
      • Configure everything for you
 
   3. Come back and run this command again
@@ -498,7 +498,7 @@ You can still analyze:
 ### Notion Database Not Found
 
 ```
-❌ Error: OSSリスト database not accessible
+❌ Error: OSS List database not accessible
 
 Database ID: 294c3130714380eab9a9ee8cd897e09e
 

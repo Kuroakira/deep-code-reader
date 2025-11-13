@@ -116,7 +116,7 @@ Guide user to grant access to a workspace page:
    - Choose existing page, or
    - Create new page: "Code Analysis Workspace"
 
-6. Click "保存" (Save) to grant access
+6. Click "Save" to grant access
 
 7. Copy the page URL:
 
@@ -131,17 +131,17 @@ Extract page ID from URL:
 
 **Note**: The new method (via Integration settings) is much simpler than the old "Share button" method.
 
-### Step 4: Create OSSリスト Database
+### Step 4: Create OSS List Database
 
 Use Notion MCP to create the master OSS database:
 
 ```markdown
-🔨 Step 3: Creating OSSリスト Database
+🔨 Step 3: Creating OSS List Database
 
 Creating master database for OSS repositories...
 ```
 
-**OSSリスト Database** (Master Database)
+**OSS List Database** (Master Database)
 
 Use Notion MCP `create_database` with:
 ```json
@@ -151,7 +151,7 @@ Use Notion MCP `create_database` with:
     "page_id": "<workspace_page_id>"
   },
   "is_inline": true,
-  "title": [{"type": "text", "text": {"content": "OSSリスト"}}],
+  "title": [{"type": "text", "text": {"content": "OSS List"}}],
   "properties": {
     "Name": {
       "title": {}
@@ -194,7 +194,7 @@ Use Notion MCP `create_database` with:
 
 Show progress:
 ```markdown
-  ✓ Created "OSSリスト" database
+  ✓ Created "OSS List" database
 
 💡 Next: Run /register-oss to add OSS repositories
    Each OSS will get its own "Commits & PRs" database
@@ -244,7 +244,7 @@ After successful setup:
 
 📋 Configuration Details:
   • Workspace: [page_name]
-  • OSSリスト: https://notion.so/workspace/[oss_db_id]
+  • OSS List: https://notion.so/workspace/[oss_db_id]
   • Auto-export: Enabled
 
 🚀 Next Steps:
@@ -256,7 +256,7 @@ After successful setup:
      /analyze-commit abc1234
 
   3. View results in Notion:
-     Check the "Commits DB" link in OSSリスト
+     Check the "Commits DB" link in OSS List
 
 💡 Tips:
   • Each OSS gets its own Commits & PRs database
@@ -294,10 +294,10 @@ To fix:
   2. Grant integration access to page:
      - Go to: https://www.notion.so/profile/integrations
      - Click on your integration
-     - Click "アクセス" (Access) tab
-     - Click "アクセス権限を編集" (Edit access permissions)
+     - Click "Access" tab
+     - Click "Edit access permissions"
      - Select the page
-     - Click "保存" (Save)
+     - Click "Save"
 ```
 
 ### Database Creation Failed
@@ -328,11 +328,11 @@ If automatic setup fails, provide manual instructions:
 
 Follow these steps to set up manually:
 
-Step 1: Create OSSリスト Database
+Step 1: Create OSS List Database
   1. Open your workspace page
   2. Type: /database
   3. Select "Table - Inline"
-  4. Name: "OSSリスト"
+  4. Name: "OSS List"
   5. Add properties:
      - Name (title)
      - GitHub URL (url)
@@ -349,15 +349,15 @@ Step 2: Create Commit & PRリスト Database
      - Commit ID / PR No (text)
      - GitHub URL (url)
      - Comment (text)
-     - OSS (relation to OSSリスト)
+     - OSS (relation to OSS List)
      - Analyzed Date (date)
      - Memo (text)
 
 Step 3: Grant Integration Access
   1. Go to: https://www.notion.so/profile/integrations
   2. Click on your integration
-  3. Click "アクセス" tab
-  4. Click "アクセス権限を編集"
+  3. Click "Access" tab
+  4. Click "Edit access permissions"
   5. Ensure the workspace page is selected (databases inherit access)
 
 Step 4: Get Database IDs
@@ -378,8 +378,8 @@ Also support checking current configuration:
 Current Notion Configuration:
   ✓ API Key: Configured
   ✓ Workspace Page: [page_name]
-  ✓ OSSリスト Database: Connected
-  ✓ Commit & PRリスト Database: Connected
+  ✓ OSS List Database: Connected
+  ✓ Commits & PRs Database: Connected
   ✓ Auto-export: Enabled
   ✓ Setup Complete: Yes
 

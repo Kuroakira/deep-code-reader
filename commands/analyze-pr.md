@@ -641,28 +641,28 @@ for file_data in files_analysis:
     # File role
     content_blocks.append({
         "paragraph": {
-            "rich_text": [{"text": {"content": f"**ファイルの役割**: {file_data['analysis']['file_role']}"}}]
+            "rich_text": [{"text": {"content": f"**File Role**: {file_data['analysis']['file_role']}"}}]
         }
     })
 
     # Change summary
     content_blocks.append({
         "paragraph": {
-            "rich_text": [{"text": {"content": f"**変更内容**: {file_data['analysis']['change_summary']}"}}]
+            "rich_text": [{"text": {"content": f"**Changes**: {file_data['analysis']['change_summary']}"}}]
         }
     })
 
     # Line-by-line code walkthrough
     if file_data.get("code_walkthrough"):
         content_blocks.append({
-            "heading_3": {"rich_text": [{"text": {"content": "🔍 詳細な変更解析"}}]}
+            "heading_3": {"rich_text": [{"text": {"content": "🔍 Detailed Change Analysis"}}]}
         })
 
         for i, section in enumerate(file_data["code_walkthrough"], 1):
             # Section heading
             content_blocks.append({
                 "paragraph": {
-                    "rich_text": [{"text": {"content": f"**セクション {i}: {section['line_range']}**"}}]
+                    "rich_text": [{"text": {"content": f"**Section {i}: {section['line_range']}**"}}]
                 }
             })
 
@@ -670,7 +670,7 @@ for file_data in files_analysis:
             if section.get("code_before"):
                 content_blocks.append({
                     "paragraph": {
-                        "rich_text": [{"text": {"content": "変更前のコード:"}}]
+                        "rich_text": [{"text": {"content": "Code before changes:"}}]
                     }
                 })
                 content_blocks.append({
@@ -684,7 +684,7 @@ for file_data in files_analysis:
             if section.get("code_after"):
                 content_blocks.append({
                     "paragraph": {
-                        "rich_text": [{"text": {"content": "変更後のコード:"}}]
+                        "rich_text": [{"text": {"content": "Code after changes:"}}]
                     }
                 })
                 content_blocks.append({
@@ -697,7 +697,7 @@ for file_data in files_analysis:
             # Detailed explanation
             content_blocks.append({
                 "paragraph": {
-                    "rich_text": [{"text": {"content": f"**コードの動作詳細**:\n{section['explanation']}"}}]
+                    "rich_text": [{"text": {"content": f"**Code Behavior Details**:\n{section['explanation']}"}}]
                 }
             })
 
@@ -938,36 +938,36 @@ Enhance authentication security with input validation, rate limiting, and compre
 
 ## 📄 src/middleware/auth-validator.js
 
-**ファイルの役割**: 認証エンドポイントへの入力を検証し、サニタイズするミドルウェア。SQLインジェクション、XSS、その他のインジェクション攻撃を防ぐ。
+**File Role**: Middleware that validates and sanitizes input to authentication endpoints. Prevents SQL injection, XSS, and other injection attacks.
 
-**変更内容**: 新規ファイル追加。包括的な入力検証とサニタイゼーション機能を実装。
+**Changes**: New file added. Implemented comprehensive input validation and sanitization functionality.
 
-### 🔍 詳細な変更解析
+### 🔍 Detailed Change Analysis
 
-**セクション 1: L1-L45**
+**Section 1: L1-L45**
 
-変更後のコード:
+Code after changes:
 ```javascript
 const validator = require('validator');
 const sanitizeHtml = require('sanitize-html');
 
 function validateAuthInput(req, res, next) {
-  // L5-10: メールアドレスの検証
+  // L5-10: Email validation
   if (req.body.email) {
     if (!validator.isEmail(req.body.email)) {
       return res.status(400).json({ error: 'Invalid email format' });
     }
-    // サニタイズして小文字に正規化
+    // Sanitize and normalize to lowercase
     req.body.email = validator.normalizeEmail(req.body.email);
   }
 
-  // L12-20: パスワードの検証
+  // L12-20: Password validation
   if (req.body.password) {
-    // 長さチェック: 8-100文字
+    // Length check: 8-100 characters
     if (!validator.isLength(req.body.password, { min: 8, max: 100 })) {
       return res.status(400).json({ error: 'Password must be 8-100 characters' });
     }
-    // パスワード強度チェック
+    // Password strength check
     if (!validator.isStrongPassword(req.body.password)) {
       return res.status(400).json({
         error: 'Password must contain uppercase, lowercase, number, and symbol'
@@ -979,16 +979,16 @@ function validateAuthInput(req, res, next) {
 }
 ```
 
-**コードの動作詳細**:
-1. **L5-10**: メールアドレスの検証とサニタイゼーション
-   - `validator.isEmail()` で RFC 5322 準拠のメールアドレス形式をチェック
-   - `normalizeEmail()` で Gmail の `.` や `+` タグを正規化し、重複アカウント作成を防ぐ
-   - 不正な形式の場合は 400 エラーを返して処理を中断
+**Code Behavior Details**:
+1. **L5-10**: Email validation and sanitization
+   - `validator.isEmail()` checks RFC 5322 compliant email format
+   - `normalizeEmail()` normalizes Gmail `.` and `+` tags to prevent duplicate account creation
+   - Returns 400 error and stops processing if format is invalid
 
-2. **L12-20**: パスワード強度の検証
-   - 長さチェックで総当たり攻撃を防ぐ（最小8文字）と DoS 攻撃を防ぐ（最大100文字）
-   - `isStrongPassword()` で大文字・小文字・数字・記号の組み合わせを強制
-   - 弱いパスワードの場合は明確なエラーメッセージで改善を促す
+2. **L12-20**: Password strength validation
+   - Length check prevents brute force attacks (min 8 chars) and DoS attacks (max 100 chars)
+   - `isStrongPassword()` enforces combination of uppercase, lowercase, numbers, and symbols
+   - Provides clear error message to encourage improvement for weak passwords
 
 ...
 
@@ -996,11 +996,11 @@ function validateAuthInput(req, res, next) {
 
 ## Commit: abc1234 - Add input validation middleware
 
-初期の入力検証ミドルウェアを実装。メール、パスワード、ユーザー名の基本的な検証ロジックを含む。
+Implemented initial input validation middleware. Includes basic validation logic for email, password, and username.
 
 ## Commit: abc1235 - Implement rate limiting
 
-Redis ベースのトークンバケット式レート制限を実装。ブルートフォース攻撃を防ぐため、IP アドレスごとに1分間に5回までのログイン試行を許可。
+Implemented Redis-based token bucket rate limiting. Allows up to 5 login attempts per minute per IP address to prevent brute force attacks.
 
 ...
 
@@ -1013,10 +1013,10 @@ Redis ベースのトークンバケット式レート制限を実装。ブル�
 
 # 🏗️ Design Patterns
 
-- **Chain of Responsibility**: ミドルウェアチェーンで段階的に検証を実行
-- **Fail Fast**: 早期にバリデーションエラーを検出して処理を中断
-- **Defense in Depth**: 複数層のセキュリティチェック（入力検証 + レート制限 + セッション管理）
-- **Token Bucket**: レート制限アルゴリズムでバースト的なトラフィックに対応
+- **Chain of Responsibility**: Validates progressively through middleware chain
+- **Fail Fast**: Detects validation errors early and stops processing
+- **Defense in Depth**: Multiple security layers (input validation + rate limiting + session management)
+- **Token Bucket**: Rate limiting algorithm handles bursty traffic
 
 # 🏛️ Architecture Diagram
 

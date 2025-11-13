@@ -194,7 +194,7 @@ if prs:
 
 **IMPORTANT**: This phase performs **line-by-line code analysis** for deep understanding.
 
-#### 3.1 ファイルの完全な内容取得 (from Local Clone + Serena MCP)
+#### 3.1 Retrieve Complete File Contents (from Local Clone + Serena MCP)
 
 For each changed file, get the full file content from local clone:
 
@@ -272,14 +272,14 @@ for file in commit_data["files"]:
 print(f"✅ Loaded {len(files_analysis)} files for deep analysis")
 ```
 
-#### 3.2 変更の意図 (Why)
+#### 3.2 Purpose of Change (Why)
 
 Analyze **why** this change was made:
 
 ```markdown
-- 問題: What problem does this solve?
-- 動機: Why was this approach chosen?
-- 背景: What's the business/technical context?
+- Problem: What problem does this solve?
+- Motivation: Why was this approach chosen?
+- Background: What's the business/technical context?
 
 Sources:
 - Commit message
@@ -288,7 +288,7 @@ Sources:
 - Code comments in changed files
 ```
 
-#### 3.3 ファイルごとの詳細解析 (Detailed File Analysis)
+#### 3.3 Detailed File Analysis
 
 **For EACH changed file**, perform deep analysis:
 
@@ -296,26 +296,26 @@ Sources:
 for file_info in files_analysis:
     file_analysis = {
         "file_path": file_info["path"],
-        "file_role": "",  # このファイルの役割
-        "change_summary": "",  # 変更の概要
-        "detailed_explanation": "",  # 詳細な説明
-        "code_walkthrough": []  # コードの行ごとの解説
+        "file_role": "",  # Role of this file
+        "change_summary": "",  # Summary of changes
+        "detailed_explanation": "",  # Detailed explanation
+        "code_walkthrough": []  # Line-by-line code walkthrough
     }
 
-    # Step 1: ファイルの役割を理解
+    # Step 1: Understand file role
     file_analysis["file_role"] = analyze_file_role(
         file_path=file_info["path"],
         content=file_info["content_after"],
         project_context=commit_data
     )
 
-    # Step 2: 変更の概要
+    # Step 2: Change summary
     file_analysis["change_summary"] = f"""
     - 変更タイプ: {file_info["status"]} ({file_info["additions"]}行追加, {file_info["deletions"]}行削除)
     - 主な変更内容: [AIが分析]
     """
 
-    # Step 3: 詳細な解説 (LINE-BY-LINE)
+    # Step 3: Detailed explanation (LINE-BY-LINE)
     # Parse the diff to identify changed sections
     changed_sections = parse_diff(file_info["diff"])
 
@@ -347,49 +347,49 @@ for file_info in files_analysis:
 ```markdown
 ### 📄 src/auth/middleware.js
 
-**ファイルの役割**:
-認証ミドルウェアを提供し、リクエストの認証トークンを検証する。全てのAPIエンドポイントの前に実行される。
+**File Role**:
+Provides authentication middleware to verify authentication tokens in requests. Executed before all API endpoints.
 
-**変更の概要**:
-- 変更タイプ: modified (45行追加, 12行削除)
-- 主な変更: 入力検証の強化とレート制限の追加
+**Change Summary**:
+- Change Type: modified (45 lines added, 12 deleted)
+- Main Changes: Enhanced input validation and added rate limiting
 
 ---
 
-#### 🔍 詳細な変更解析
+#### 🔍 Detailed Change Analysis
 
-**セクション 1: トークン検証の強化 (L23-L45)**
+**Section 1: Enhanced Token Validation (L23-L45)**
 
-変更前のコード:
+Code Before:
 ```javascript
 function validateToken(token) {
   return jwt.verify(token, SECRET_KEY);
 }
 ```
 
-変更後のコード:
+Code After:
 ```javascript
 function validateToken(token) {
-  // L23: トークンの存在チェック - 空文字列やnullを防ぐ
+  // L23: Token existence check - prevent empty strings or null
   if (!token || typeof token !== 'string') {
     throw new Error('Invalid token format');
   }
 
-  // L27-28: トークンの長さチェック - 異常に短い/長いトークンを拒否
-  // JWTの標準的な長さは200-300文字程度
+  // L27-28: Token length check - reject abnormally short/long tokens
+  // Standard JWT length is around 200-300 characters
   if (token.length < 50 || token.length > 500) {
     throw new Error('Token length out of acceptable range');
   }
 
-  // L32-36: トークンのフォーマット検証
-  // JWTは "header.payload.signature" の3部構成
+  // L32-36: Token format validation
+  // JWT consists of 3 parts: "header.payload.signature"
   const parts = token.split('.');
   if (parts.length !== 3) {
     throw new Error('Malformed JWT token');
   }
 
-  // L40-45: Base64エンコーディングの検証
-  // 各パートがBase64エンコードされているか確認
+  // L40-45: Base64 encoding validation
+  // Verify each part is Base64 encoded
   try {
     parts.forEach(part => {
       Buffer.from(part, 'base64');
@@ -398,57 +398,57 @@ function validateToken(token) {
     throw new Error('Invalid Base64 encoding in token');
   }
 
-  // L45: 最終的な署名検証（元のコードと同じ）
+  // L45: Final signature verification (same as original code)
   return jwt.verify(token, SECRET_KEY);
 }
 ```
 
-**なぜこの変更が必要だったか**:
-CVE-2024-1234で報告された脆弱性に対処。攻撃者が不正な形式のトークンを送信してサーバーをクラッシュさせる問題を修正。
+**Why This Change Was Needed**:
+Addresses vulnerability reported in CVE-2024-1234. Fixes issue where attackers could crash server by sending malformed tokens.
 
-**コードの動作詳細**:
-1. **L23-25**: まず最初にトークンの存在と型をチェック。これにより、`undefined`や数値などの無効な入力を早期にリジェクト。
-2. **L27-30**: 長さチェックで、極端に短い（総当たり攻撃）や長い（DoS攻撃）トークンを防ぐ。
-3. **L32-36**: JWTの基本構造（3パート構成）を検証。不正なフォーマットを早期検出。
-4. **L40-44**: 各パートのBase64エンコーディングを検証。デコードエラーでクラッシュする前に捕捉。
-5. **L45**: 全ての検証を通過した後、元の`jwt.verify()`を実行。
+**Code Behavior Details**:
+1. **L23-25**: First check token existence and type. This rejects invalid inputs like `undefined` or numbers early.
+2. **L27-30**: Length check prevents extremely short (brute force attack) or long (DoS attack) tokens.
+3. **L32-36**: Validates basic JWT structure (3-part composition). Detects malformed format early.
+4. **L40-44**: Validates Base64 encoding of each part. Catches decoding errors before they crash.
+5. **L45**: After passing all validations, executes original `jwt.verify()`.
 
-**使用されているパターン**:
-- **Defense in Depth**: 複数層の検証で攻撃を防ぐ
-- **Fail Fast**: 問題を早期に検出してエラーを返す
-- **Input Validation**: 全ての外部入力を信頼せず検証
+**Patterns Used**:
+- **Defense in Depth**: Multiple layers of validation to prevent attacks
+- **Fail Fast**: Detect problems early and return errors
+- **Input Validation**: Never trust external inputs, always validate
 
 ---
 
-**セクション 2: レート制限の追加 (L67-L89)**
+**Section 2: Adding Rate Limiting (L67-L89)**
 
-[... 同様の詳細な解析 ...]
+[... Similar detailed analysis ...]
 ```
 
-#### 3.4 変更内容の全体サマリ (What)
+#### 3.4 Overall Changes Summary (What)
 
 After detailed file analysis, create overall summary:
 
 ```markdown
-変更されたファイル:
-1. **src/auth/middleware.js** (45行追加, 12行削除)
-   - トークン検証の多層防御を実装
-   - レート制限機能の追加
+Changed Files:
+1. **src/auth/middleware.js** (45 lines added, 12 deleted)
+   - Implemented multi-layered token validation
+   - Added rate limiting functionality
 
-2. **src/auth/validator.js** (23行追加, 5行削除)
-   - カスタムバリデータのサポート追加
+2. **src/auth/validator.js** (23 lines added, 5 deleted)
+   - Added custom validator support
 
-3. **test/auth.test.js** (67行追加, 0行削除)
-   - 包括的なテストケースの追加
-   - エッジケースのカバレッジ向上
+3. **test/auth.test.js** (67 lines added, 0 deleted)
+   - Added comprehensive test cases
+   - Improved edge case coverage
 
-主な技術的変更:
-- 入力検証の強化（長さ、型、フォーマット）
-- レート制限アルゴリズム（Token Bucket方式）の導入
-- テストカバレッジ 45% → 92%に向上
+Main Technical Changes:
+- Enhanced input validation (length, type, format)
+- Introduced rate limiting algorithm (Token Bucket method)
+- Test coverage improved from 45% to 92%
 ```
 
-#### 3.5 影響範囲 (Impact)
+#### 3.5 Impact Scope (Impact)
 
 Assess **impact** on the codebase with detailed dependency analysis:
 
@@ -492,96 +492,96 @@ for change in changed_sections:
 **Example output**:
 
 ```markdown
-### 🏗️ 影響範囲
+### 🏗️ Impact Scope
 
-#### 影響を受けるモジュール
+#### Affected Modules
 
-**直接的な影響** (このコードを直接使用):
+**Direct Impact** (directly uses this code):
 1. **api/routes/auth.js** (12箇所で使用)
    - L45: `validateToken(req.headers.authorization)`
    - L67: `validateToken(sessionToken)`
-   - 影響: 新しい検証ロジックが自動適用、修正不要
+   - Impact: New validation logic automatically applied, no fixes needed
 
-2. **api/routes/user.js** (8箇所で使用)
+2. **api/routes/user.js** (8 uses)
    - L23: `middleware.validateToken(token)`
-   - 影響: エラーハンドリングの改善が必要（新しいエラータイプ対応）
+   - Impact: Error handling improvements needed (new error types)
 
-**間接的な影響** (依存関係を通じて影響):
+**Indirect Impact** (affected through dependencies):
 1. **middleware/session.js**
-   - auth/middlewareを経由して影響
-   - セッション検証フローに変更なし
+   - Affected through auth/middleware
+   - No changes to session validation flow
 
 2. **config/security.js**
-   - レート制限の設定値を参照
-   - 新しい設定項目の追加が必要
+   - References rate limit configuration values
+   - New configuration items needed
 
-#### 破壊的変更 (Breaking Changes)
+#### Breaking Changes
 
-❌ **なし** - すべての変更は後方互換性を保持
+❌ **None** - All changes maintain backward compatibility
 
-#### API互換性
+#### API Compatibility
 
-✅ **完全互換** - 既存のAPIシグネチャに変更なし
+✅ **Fully Compatible** - No changes to existing API signatures
 
-追加されたエラータイプ:
-- `TokenFormatError` - 不正なフォーマット
-- `TokenLengthError` - 長さが範囲外
-- `RateLimitError` - レート制限超過
+Added Error Types:
+- `TokenFormatError` - Invalid format
+- `TokenLengthError` - Length out of range
+- `RateLimitError` - Rate limit exceeded
 
-移行ガイド:
+Migration Guide:
 ```javascript
-// Before (既存のコード - 引き続き動作)
+// Before (existing code - continues to work)
 try {
   const user = validateToken(token);
 } catch (err) {
-  // 一般的なエラー処理
+  // General error handling
 }
 
-// After (推奨 - 新しいエラータイプに対応)
+// After (recommended - handles new error types)
 try {
   const user = validateToken(token);
 } catch (err) {
   if (err instanceof TokenFormatError) {
-    // 不正なフォーマット専用の処理
+    // Handle invalid format specifically
   } else if (err instanceof RateLimitError) {
-    // レート制限専用の処理
+    // Handle rate limit specifically
   }
-  // その他のエラー処理
+  // Other error handling
 }
 ```
 
-#### パフォーマンス影響
+#### Performance Impact
 
-**検証処理**:
-- 追加の検証ステップ: +0.5ms (L23-L44の処理)
-- 全体的なレイテンシ: 2.3ms → 2.8ms (+21%)
-- トレードオフ: わずかな遅延 vs セキュリティ大幅向上
+**Validation Processing**:
+- Additional validation steps: +0.5ms (L23-L44 processing)
+- Overall latency: 2.3ms → 2.8ms (+21%)
+- Trade-off: Slight delay vs significant security improvement
 
-**メモリ使用量**:
-- レート制限データ構造: +2MB (1万ユーザーあたり)
-- Token Bucketマップ: O(active_users) のメモリ
+**Memory Usage**:
+- Rate limit data structure: +2MB (per 10K users)
+- Token Bucket map: O(active_users) memory
 
-**スケーラビリティ**:
-- ✅ 問題なし: レート制限はRedisへ移行可能（コメントに記載）
-- ⚠️  注意: 10万+ 同時ユーザーではRedis化を推奨
+**Scalability**:
+- ✅ No issues: Rate limiting can migrate to Redis (noted in comments)
+- ⚠️  Note: Redis recommended for 100K+ concurrent users
 
-#### セキュリティ影響
+#### Security Impact
 
-**修正された脆弱性**:
+**Fixed Vulnerabilities**:
 - **CVE-2024-1234** (Critical): Server crash via malformed tokens
-- **CVSS Score**: 9.8 → 0.0 (完全修正)
+- **CVSS Score**: 9.8 → 0.0 (fully fixed)
 
-**追加されたセキュリティ機能**:
-1. 入力検証の多層防御
-2. DoS攻撃対策（レート制限）
-3. 異常検知と早期リジェクト
+**Added Security Features**:
+1. Multi-layered input validation
+2. DoS attack protection (rate limiting)
+3. Anomaly detection and early rejection
 
-**セキュリティテストカバレッジ**:
-- Fuzzing test追加: 10,000パターン
-- エッジケース: 全てカバー
+**Security Test Coverage**:
+- Fuzzing tests added: 10,000 patterns
+- Edge cases: All covered
 ```
 
-#### 3.6 設計意図とアーキテクチャ (Design)
+#### 3.6 Design Intent and Architecture (Design)
 
 Understand **design** decisions with deep architectural analysis:
 
@@ -612,22 +612,22 @@ design_analysis["trade_offs"] = trade_offs
 **Example output**:
 
 ```markdown
-### 🎨 設計意図とアーキテクチャ
+### 🎨 Design Intent and Architecture
 
-#### 使用されている設計パターン
+#### Design Patterns Used
 
 **1. Chain of Responsibility (責任連鎖パターン)**
 
 ```
-リクエスト → 存在チェック → 型チェック → 長さチェック → フォーマット検証 → Base64検証 → 署名検証 → 成功
-            ↓            ↓          ↓             ↓                ↓              ↓
-           エラー       エラー      エラー         エラー           エラー         エラー
+Request → Exists Check → Type Check → Length Check → Format Validation → Base64 Validation → Signature Verification → Success
+          ↓              ↓             ↓                ↓                   ↓                   ↓
+         Error          Error         Error            Error               Error               Error
 ```
 
-なぜこのパターン?
-- 各検証ステップが独立して失敗可能
-- 新しい検証ルールの追加が容易
-- テストが書きやすい（各ステップを個別にテスト）
+Why this pattern?
+- Each validation step can fail independently
+- Easy to add new validation rules
+- Easy to write tests (test each step individually)
 
 **2. Fail Fast (早期失敗パターン)**
 
