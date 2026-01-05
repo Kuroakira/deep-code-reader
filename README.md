@@ -1,32 +1,30 @@
 # OSS Learning Platform
 
-**Automated OSS codebase analysis with intelligent insights and Notion integration, powered by Claude Code and MCP servers.**
+**Automated OSS codebase analysis with Notion integration, powered by Claude Code and MCP servers.**
 
 Perfect for developers who want to:
-- 🚀 Understand commits and PRs deeply
+- 🚀 Track and understand commits systematically
 - 📚 Build a knowledge base in Notion
-- 🎯 Learn WHY changes were made, not just WHAT
+- 🎯 Learn from open source projects chronologically
 - 🤝 Prepare for contributions with context
 
 ## ✨ Features
 
-### 🔍 Commit-Level Deep Analysis
-- **Why (変更の意図)** - Understand the motivation behind changes
-- **What (変更内容)** - See exactly what was changed
-- **Impact (影響範囲)** - Know which modules are affected
-- **Design (設計意図)** - Learn the design decisions and trade-offs
-- **Context (コンテキスト)** - Related issues, PRs, and surrounding commits
+### 🔍 Batch Commit Tracking
+- **Range-based addition** - Add commits 1-100, 101-200, etc.
+- **Duplicate detection** - Automatically skips existing entries
+- **Schema auto-detection** - Adapts to your Notion database structure
+- **Simple info** - Commit ID, message, author, date, files changed
 
 ### 🤖 Intelligent Automation
 - **One-command installation** - `./install.sh` sets up everything
-- **Project context memory** - Register once, analyze many commits without repeating URLs
-- **Strategic analysis** - AI-powered analysis planning with Sequential Thinking
+- **Project context memory** - Register once, add commits without repeating URLs
+- **Local clone support** - Fast access via local git repository
 - **Symbol-level understanding** - Serena MCP for semantic code comprehension
-- **Framework expertise** - Context7 MCP for official documentation patterns
 
 ### 📝 Notion Integration
-- **Automatic export** - Analysis results saved to your Notion workspace
-- **Structured documentation** - Consistent, searchable analysis pages
+- **Your own database** - You create and control the database structure
+- **Batch export** - Add hundreds of commits efficiently
 - **Team collaboration** - Share insights with your team
 - **Knowledge base** - Build a library of analyzed projects
 
@@ -45,100 +43,56 @@ cd deep-code-reader
 
 The installer will:
 1. ✅ Check dependencies (Node.js, Python, npm)
-2. 📦 Install MCP servers (auto-detects existing installations)
-   - Required: GitHub, Notion
-   - Optional: Additional MCP servers (interactive selection)
+2. 📦 Install MCP servers (GitHub, Notion)
 3. ⚙️  Configure Claude Code
 4. 🎯 Install skills and commands
-5. 🔐 Set up Notion integration
-   - Enter Notion API key during installation
-   - MCP configurations automatically updated
-   - Database creation wizard available after installation
 
-### Uninstallation
+### Setup Notion Database (Manual)
 
-To safely remove all installed components:
+**Before using the platform, create your Notion database:**
 
-```bash
-./uninstall.sh
-```
-
-The uninstaller will:
-- 🔍 Scan for installed components
-- 📋 Show what will be removed
-- ⚠️  Ask for confirmation
-- 🎯 Let you choose which MCP servers to remove
-- 🔄 Offer to restore config backups
-- 💾 Preserve your Notion configuration (optional)
-- 🗑️  Clean up all files
-
-### Setup Notion (During Installation)
-
-**During `./install.sh`:**
-
-When prompted "Setup Notion integration now? (y/n)":
-1. **Say yes** if you want Notion integration
-2. **Get API key** - Visit https://www.notion.so/profile/integrations
+1. **Create a Notion Integration**
+   - Visit https://www.notion.so/my-integrations
    - Create integration named "Deep Code Reader"
    - Copy the Internal Integration Secret
-3. **Paste API key** - Installer automatically configures MCPs
-4. **Grant access** - Go to integration settings:
-   - Visit https://www.notion.so/profile/integrations
-   - Click on your integration
-   - Click "アクセス" (Access) tab
-   - Click "アクセス権限を編集"
-   - Select a workspace page
-5. **Done!** - Notion MCP ready to use
 
-**After Installation:**
+2. **Create a Database** with these properties:
+   - `Title` (title) - Commit title
+   - `Commit ID / PR No` (text) - Full commit hash
+   - `Type` (select) - "Commit" option
+   - `GitHub URL` (url) - Link to commit
+   - `Comment` (text) - Commit message
+   - `Memo` (text) - Your notes
 
-```bash
-# Start Claude Code
-claude-code
+3. **Share Database with Integration**
+   - Open database in Notion
+   - Click "..." → "Connections" → Add your integration
 
-# Complete Notion setup
-/setup-notion
-```
+4. **Copy Database ID** from URL:
+   - URL: `https://notion.so/abc123def456?v=...`
+   - Database ID: `abc123def456`
 
-The wizard will:
-1. **Ask for workspace page URL** - Enter the page you granted access to
-2. **Auto-create OSSリスト database** - Master database for all repositories
-3. **Done!** - Ready to register OSS repositories
-
-**Note**: Individual "Commits & PRs" databases are created automatically when you register each OSS with `/register-oss`
-
-**If you skipped during installation:**
-```bash
-# Get API key from Notion
-# Run update script
-python3 ~/.claude/deep-code-reader/scripts/update_notion_mcp.py <api_key>
-
-# Restart Claude Code
-# Then run /setup-notion
-```
-
-### First Analysis (30 seconds)
+### First Use (1 minute)
 
 ```bash
-# Step 1: Register OSS repository (one time only)
-/register-oss https://github.com/expressjs/express
+# Step 1: Register OSS repository with your database
+/register-oss https://github.com/expressjs/express --database abc123def456
 
-# Step 2: Analyze commits - URL省略!
-/analyze-commit abc1234567          # Just the commit hash
-/analyze-commit def5678             # No URL needed!
-/analyze-pr 5234                    # Just the PR number
+# Step 2: Add commits in batches
+/add-commits 1 100      # First 100 commits (oldest)
+/add-commits 101 200    # Next 100 commits
+/add-commits 201 300    # Continue...
 
-# Check current project
+# Check progress
 /current-oss
+/list-commits
 ```
 
 **That's it!** Claude will:
-- 💾 Remember your project context (no repeated URLs!)
+- 💾 Clone the repository locally
 - 🔄 Fetch commit information
-- 🎯 Understand WHY the change was made
-- 🏗️ Analyze impact on architecture
-- 📊 Show detailed analysis in console
-- 📤 Export everything to Notion automatically
+- 📊 Add commits to your Notion database
+- ⏭️ Skip duplicates automatically
 
 ## 📁 Project Structure
 
@@ -148,77 +102,38 @@ deep-code-reader/
 ├── uninstall.sh                  # Clean uninstaller
 ├── commands/                     # Slash commands
 │   ├── register-oss.md          # Register OSS repository
+│   ├── add-commits.md           # Batch add commits
 │   ├── current-oss.md           # Show current project
-│   ├── analyze-commit.md        # Analyze single commit
-│   ├── analyze-pr.md            # Analyze pull request
-│   └── setup-notion.md          # Notion configuration
+│   └── list-commits.md          # List commits
 ├── config/                       # Configuration files
-│   ├── mcp_servers.json         # MCP server setup
-│   └── notion_template.json     # Notion page template
+│   └── mcp_servers.json         # MCP server setup
 ├── scripts/                      # Utility scripts
-│   ├── update_notion_mcp.py     # Notion config updater
 │   └── utils/                   # Helper utilities
-├── skills/                       # Claude Skills
-│   └── deep-code-reader/        # Code analysis skill
-└── docs/                         # Documentation
+└── skills/                       # Claude Skills
+    └── deep-code-reader/        # Code analysis skill
 ```
 
 ## 📦 Installed Files
 
-After running `./install.sh`, the following files are created in your home directory:
+After running `./install.sh`:
 
 ```
 ~/.claude/
 ├── deep-code-reader/            # Project-specific files
-│   ├── notion_config.json       # Notion integration settings
-│   │                            # - API key
-│   │                            # - Workspace page ID
-│   │                            # - Database IDs
-│   │                            # - Auto-export settings
-│   └── scripts/                 # Utility scripts
-│       ├── update_notion_mcp.py # Update Notion config
-│       └── utils/               # Helper modules
+│   ├── repos/                   # Cloned repositories
+│   │   └── {owner}/{repo}/      # Local git clones
+│   └── current_oss.json         # Current project config
 │
-├── commands/                    # Slash commands (copied from repo)
+├── commands/                    # Slash commands
 │   ├── register-oss.md
+│   ├── add-commits.md
 │   ├── current-oss.md
-│   ├── analyze-commit.md
-│   ├── analyze-pr.md
-│   ├── list-commits.md
-│   ├── list-prs.md
-│   ├── setup-notion.md
-│   └── export-analysis.md
+│   └── list-commits.md
 │
-└── skills/                      # Claude Skills (copied from repo)
-    └── deep-code-reader/        # Analysis skill
+└── skills/                      # Claude Skills
+    └── deep-code-reader/
 
 ~/.claude.json                   # Claude Code CLI configuration
-                                 # - MCP server settings (GitHub, Notion)
-                                 # - Notion API token
-```
-
-**Important Notes:**
-- `~/.claude/deep-code-reader/` - **Only modified by this project**
-  - Safe to backup/restore
-  - Contains all project-specific settings
-  - Updated by `/setup-notion` and utility scripts
-
-- `~/.claude.json` - **Shared by all Claude Code projects**
-  - Modified during installation (adds Notion MCP server)
-  - Backed up automatically before changes
-  - Restored during uninstallation (optional)
-
-- `~/.claude/commands/` and `~/.claude/skills/` - **Shared resources**
-  - May contain commands/skills from other projects
-  - Uninstaller only removes files from this project
-
-**Backup Recommendation:**
-```bash
-# Before installation
-cp ~/.claude.json ~/.claude.json.backup
-
-# Or use the built-in backup during uninstall
-./uninstall.sh  # Offers to restore backups
 ```
 
 ## 🎯 Usage Examples
@@ -226,229 +141,142 @@ cp ~/.claude.json ~/.claude.json.backup
 ### Register OSS Repository
 
 ```bash
-# Register once per project
-/register-oss https://github.com/expressjs/express
+# Register with your Notion database
+/register-oss https://github.com/nestjs/nest --database abc123def456
 
-# Creates entry in OSSリスト database
-# Saves as current project in memory
+# Output:
+# ✅ OSS Repository Registered
+# Project: nest
+# Database: abc123def456
+# Total Commits: 5432
+```
+
+### Add Commits in Batches
+
+```bash
+# Add oldest 100 commits
+/add-commits 1 100
+
+# Add next batch
+/add-commits 101 200
+
+# Add specific range
+/add-commits 301 400
 ```
 
 ### Check Current Project
 
 ```bash
-# View currently active project
 /current-oss
 
-# Shows: Repository info, Notion page, available commands
+# Shows: Repository info, database, commit count
 ```
 
-### Analyze Commits
+### List Available Commits
 
 ```bash
-# After registration - URL not needed!
-/analyze-commit abc1234
-/analyze-commit def5678
+# List oldest commits (default)
+/list-commits
 
-# Or with explicit URL (optional)
-/analyze-commit https://github.com/expressjs/express abc1234
+# List with limit
+/list-commits --limit 50
 
-# Shows detailed analysis in console + exports to Notion
-```
-
-### Analyze Pull Requests
-
-```bash
-# Just the PR number!
-/analyze-pr 5234
-
-# Or with full URL (optional)
-/analyze-pr https://github.com/expressjs/express/pull/5234
-
-# Asks: analyze all commits or select specific ones
+# List newest first
+/list-commits --order newest
 ```
 
 ### Switch Between Projects
 
 ```bash
 # Switch to a different project
-/register-oss https://github.com/facebook/react
-/analyze-commit xyz9012          # Now uses react repo
+/register-oss https://github.com/facebook/react --database def456abc789
 
-# Switch back
-/register-oss https://github.com/expressjs/express
-/analyze-commit abc1234          # Back to express
-```
-
-### Notion Setup
-
-```bash
-# Configure Notion integration (first time only)
-/setup-notion
-
-# Or manually edit: ~/.claude/deep-code-reader/notion_config.json
+# Add commits to new project
+/add-commits 1 100
 ```
 
 ## 💡 What You Get
 
-After analyzing a commit, you'll receive:
+After adding commits, your Notion database will have:
 
-### 📊 In Claude Code
+| Title | Type | Commit ID | GitHub URL | Comment |
+|-------|------|-----------|------------|---------|
+| f7c8d10: Initial commit | Commit | f7c8d10... | https://... | Initial commit message |
+| a3b4c5d: Add routing | Commit | a3b4c5d... | https://... | Add basic routing... |
+| ... | ... | ... | ... | ... |
 
-```markdown
-📊 Commit Analysis: abc1234
-
-## 🎯 変更の意図 (Why)
-Fix security vulnerability in authentication middleware (CVE-2024-1234)
-
-Related Issues: #1234, #1235
-
-## 📝 変更内容 (What)
-Changed Files (3):
-- src/auth/middleware.js (+45, -12)
-- src/auth/validator.js (+23, -5)
-- test/auth.test.js (+67, -0)
-
-## 🏗️ 影響範囲 (Impact)
-Affected Modules:
-- api/routes/* (10 files)
-- middleware/session.js
-✅ No breaking changes
-
-## 🎨 設計意図 (Design)
-Pattern: Chain of Responsibility
-Trade-off: +2MB memory for 10x security
-
-## 🔗 コンテキスト
-Before: abc0123 - Refactor auth module
-After: abc1235 - Update documentation
-PR: #5234 (5 approving reviews)
-
-💾 Exported to Notion: https://notion.so/commit-page
-```
-
-### 📝 In Notion
-
-A structured analysis page with:
-- 🎯 変更の意図 - Why this change was made
-- 📝 変更内容 - What was changed (with code diff)
-- 🏗️ 影響範囲 - Impact on the codebase
-- 🎨 設計意図 - Design decisions and trade-offs
-- 🔗 コンテキスト - Related issues, commits, PRs
-- 📋 Complete diff (in toggle)
-- 📝 Memo field (for your notes)
+Each page contains:
+- Commit metadata (author, date, files changed)
+- Full commit message
+- Link to GitHub
+- Memo field for your notes
 
 ## 🛠️ MCP Servers Used
 
-This platform leverages powerful MCP servers:
-
 ### Built-in (Claude Code)
 - **Serena** - Semantic code understanding & project memory
-- **Context7** - Official framework documentation
-- **Sequential Thinking** - Strategic analysis planning
 
 ### External (Auto-installed)
 - **GitHub MCP** - Repository metadata and access
-- **Notion MCP** - Automated export to Notion
-
-## 📚 Documentation
-
-- **[QUICKSTART.md](QUICKSTART.md)** - Get started in 5 minutes
-- **[REPOSITORY_STRUCTURE.md](REPOSITORY_STRUCTURE.md)** - Project organization
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
-- **[docs/MCP_SETUP.md](docs/MCP_SETUP.md)** - MCP server configuration
-- **[docs/NOTION_INTEGRATION.md](docs/NOTION_INTEGRATION.md)** - Notion setup guide
-
-## 🧪 Supported Languages & Frameworks
-
-### Current Support
-- **Python** - Full support (Django, Flask, FastAPI)
-- **JavaScript/TypeScript** - Full support (React, Vue, Express, Next.js)
-
-### Planned Support
-- **Go** - Coming soon
-- **Rust** - Coming soon
-- **Java** - Coming soon
-- **Ruby** - Coming soon
+- **Notion MCP** - Database operations
 
 ## 🔧 Requirements
 
 - **Node.js** v18+ (for MCP servers)
 - **Claude Code** (CLI or Desktop)
-- **Notion account** (optional, for exports)
-- **GitHub account** (for analyzing private repos)
+- **Notion account** (for database)
+- **GitHub account** (for API access)
 
 ## 🎓 Use Cases
 
 ### For Open Source Contributors
 ```
-1. Discover new projects to contribute to
-2. Understand codebase before first PR
-3. Identify "good first issues"
-4. Learn architectural patterns
+1. Register interesting projects
+2. Add commits chronologically
+3. Study how the project evolved
+4. Build understanding for contributions
 ```
 
 ### For Development Teams
 ```
-1. Onboard new team members faster
-2. Document legacy codebases
-3. Plan refactoring initiatives
-4. Share architecture knowledge
-```
-
-### For Technical Leads
-```
-1. Evaluate potential dependencies
-2. Assess code quality and architecture
-3. Make informed technology decisions
-4. Build technical documentation
+1. Track commits from team projects
+2. Build searchable commit history
+3. Add notes and context
+4. Share knowledge base
 ```
 
 ### For Learners
 ```
-1. Study real-world code architecture
-2. Learn from established projects
-3. Build a personal knowledge base
-4. Understand best practices
+1. Study project evolution from first commit
+2. Understand how features were built
+3. Learn patterns from experienced developers
+4. Build personal knowledge base
 ```
+
+## 📋 Available Commands
+
+| Command | Description |
+|---------|-------------|
+| `/register-oss` | Register OSS repository with database |
+| `/add-commits` | Batch add commits to Notion |
+| `/current-oss` | Show current project info |
+| `/list-commits` | List available commits |
 
 ## 🤝 Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
-- Development setup
-- Code style guidelines
-- Testing requirements
-- Pull request process
-
-Ideas for contributions:
-- Support for additional languages
-- New analysis capabilities
-- Alternative export formats
-- Performance optimizations
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE) for details
 
-## 🙏 Acknowledgments
-
-Built with:
-- [Claude Code](https://claude.com/claude-code) by Anthropic
-- [Model Context Protocol (MCP)](https://modelcontextprotocol.io/)
-- [Notion API](https://developers.notion.com/)
-- [GitHub API](https://docs.github.com/en/rest)
-
-Inspired by the need for better tools to understand and contribute to open source projects.
-
 ## 🔗 Links
 
 - **GitHub Repository**: https://github.com/Kuroakira/deep-code-reader
 - **Issues & Feedback**: https://github.com/Kuroakira/deep-code-reader/issues
-- **Discussions**: https://github.com/Kuroakira/deep-code-reader/discussions
-- **Anthropic Skills**: https://docs.anthropic.com/en/docs/build-with-claude/skills
-- **MCP Documentation**: https://modelcontextprotocol.io/
 
 ---
 
 **Built with ❤️ for the OSS community**
 
-*Making open source more accessible, one analysis at a time.*
+*Making open source more accessible, one commit at a time.*
