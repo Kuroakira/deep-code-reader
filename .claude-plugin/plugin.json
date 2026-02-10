@@ -1,0 +1,19 @@
+{
+  "name": "deep-code-reader",
+  "description": "Learn OSS codebases commit by commit with AI-powered explanations — conversational interface for systematic deep code reading with Obsidian integration",
+  "version": "0.1.0",
+  "author": {
+    "name": "Kuroakira"
+  },
+  "homepage": "https://github.com/Kuroakira/deep-code-reader",
+  "repository": "https://github.com/Kuroakira/deep-code-reader",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "code-reading",
+    "oss",
+    "learning",
+    "obsidian",
+    "github"
+  ]
+}

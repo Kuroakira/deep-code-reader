@@ -1,0 +1,17 @@
+{
+  "name": "deep-code-reader",
+  "owner": {
+    "name": "Kuroakira"
+  },
+  "metadata": {
+    "description": "Learn OSS codebases commit by commit with AI-powered explanations"
+  },
+  "plugins": [
+    {
+      "name": "deep-code-reader",
+      "description": "Learn OSS codebases commit by commit with AI-powered explanations — conversational interface for systematic deep code reading with Obsidian integration",
+      "version": "0.1.0",
+      "source": "./"
+    }
+  ]
+}

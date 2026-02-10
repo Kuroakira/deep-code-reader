@@ -1,7 +1,0 @@
-{
-  "api_key": "YOUR_NOTION_API_KEY",
-  "oss_database_id": "294c3130714380eab9a9ee8cd897e09e",
-  "commits_database_id": "294c313071438040aa9ee2b02884dab3",
-  "auto_export": true,
-  "analysis_mode": "commit"
-}
