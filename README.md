@@ -1,8 +1,31 @@
 # Deep Code Reader
 
-**Learn OSS codebases commit by commit with AI-powered explanations**
+**Learn OSS codebases commit by commit — build an Obsidian knowledge base with AI-powered explanations**
 
-A conversational Claude Code skill for systematic deep code reading. Analyze commits chronologically, understand the evolution of open source projects, and build your knowledge base in Obsidian.
+A conversational Claude Code skill for systematic deep code reading. Analyze commits chronologically, understand how open source projects evolved, and automatically generate rich Markdown documentation into your Obsidian vault.
+
+## Why Obsidian?
+
+Deep Code Reader doesn't just explain code — it **builds a searchable knowledge base** in your Obsidian vault. Every commit analysis is saved as a Markdown file with Mermaid diagrams, design pattern breakdowns, and your own Q&A. Over time, you accumulate a structured library of architectural knowledge that you can browse, search, and annotate.
+
+```mermaid
+graph LR
+    CC["🤖 Claude Code<br/>(analyze & explain)"]
+    OV["📓 Obsidian Vault<br/>(browse, search, & note)"]
+    CC -->|"generates Markdown"| OV
+
+    subgraph "Vault Structure"
+        IDX["_index.md<br/>Project overview"]
+        C1["0001-abc1234.md"]
+        C2["0002-def5678.md"]
+        C3["..."]
+    end
+
+    OV --- IDX
+    OV --- C1
+    OV --- C2
+    OV --- C3
+```
 
 ## Quick Start
 
@@ -12,88 +35,78 @@ A conversational Claude Code skill for systematic deep code reading. Analyze com
 📚 Deep Code Reader
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-何を読みますか？
+What would you like to read?
 
-> expressを読みたい
+> I want to read express
 
-✅ expressjs/express を設定しました
-📊 総コミット数: 5,432
+✅ Set up expressjs/express
+📊 Total commits: 5,432
 
-最初のコミットから読み始めますか？
+Start from the first commit?
 
-> はい
+> Yes
 
-[詳細な解説が表示される]
+[Detailed analysis is displayed and saved to Obsidian]
 
-> なぜこのパターンを使ってるの？
+> Why is this pattern used here?
 
-[質問に回答、Q&Aに保存]
+[Answers your question, saves Q&A to the Markdown file]
 
-> 次
+> Next
 
-[次のコミット解説...]
+[Next commit analysis...]
 ```
 
 ## Features
 
-- **会話型インターフェース** - コマンドを覚える必要なし
-- **詳細な解説** - Mermaid図、設計パターン、Before/After比較
-- **PR情報統合** - ディスカッション、レビューコメントも翻訳・解説
-- **Q&A蓄積** - 質問と回答を自動保存
-- **Obsidian連携** - ナレッジベースとして蓄積・検索
+- **Conversational interface** — No commands to memorize; just talk naturally
+- **Rich analysis output** — Mermaid diagrams, design patterns, Before/After comparisons
+- **PR context included** — Discussion threads and review comments, translated and explained
+- **Q&A accumulation** — Your questions and answers are auto-saved to each commit's file
+- **Obsidian knowledge base** — All output is structured Markdown, ready to browse, search, and annotate
 
-## How It Works
+## What You Can Say
 
-```
-┌─────────────────┐     ┌─────────────────┐
-│   Claude Code   │────▶│    Obsidian     │
-│  (操作・解説)    │     │  (閲覧・メモ)    │
-└─────────────────┘     └─────────────────┘
-```
+| Intent | Examples |
+|--------|---------|
+| Start | "I want to read express", "analyze react" |
+| Next commit | "next", "continue" |
+| Ask questions | "Why is this pattern used?", "What does this do?" |
+| View list | "commit list", "list" |
+| Check progress | "progress", "status" |
+| Read specific | "explain abc1234", "read PR #298" |
 
-**Claude Code**: スキルを起動して会話
-**Obsidian**: 生成されたMarkdownを閲覧・検索・メモ追記
+## What Each Analysis Contains
 
-## What You Say
+Every commit generates a Markdown file with:
 
-| やりたいこと | 言い方の例 |
-|------------|-----------|
-| 始める | 「expressを読みたい」「reactを分析」 |
-| 次へ進む | 「次」「続き」 |
-| 質問する | 「なぜこうなってる？」「このパターンは？」 |
-| 一覧を見る | 「コミット一覧」「リスト」 |
-| 進捗確認 | 「進捗」「どこまで読んだ？」 |
-| 特定のを読む | 「abc1234を解説して」「PR #298を読む」 |
+- 📋 **Basic info** — PR number, author, change size
+- 🎯 **Change summary** — Core concept, Before/After
+- 🏗️ **Architecture** — Visualized with Mermaid diagrams
+- 💻 **Code walkthrough** — With design rationale
+- 💬 **PR discussions** — Original English + Japanese translation + context
+- 🎓 **Design patterns** — Patterns and principles applied
+- 🔄 **Before/After** — Comparison of improvements
+- 📚 **Learning points** — Key takeaways from this commit
 
 ## Output Structure
 
 ```
 ~/obsidian-vault/deep-code-reading/
 └── expressjs-express/
-    ├── _index.md              # プロジェクト概要
+    ├── _index.md              # Project overview
     └── commits/
-        ├── 0001-abc1234.md
+        ├── 0001-abc1234.md    # Each commit analysis
         ├── 0002-def5678.md
         └── ...
 ```
-
-### Each Analysis Contains
-
-- 📋 **基本情報** - PR番号、作成者、変更規模
-- 🎯 **変更の要約** - 核心コンセプト、Before/After
-- 🏗️ **アーキテクチャ** - Mermaid図で可視化
-- 💻 **コード解説** - 設計ポイント付き
-- 💬 **PRやり取り** - 英語原文 + 日本語訳 + 背景解説
-- 🎓 **設計パターン** - 使われているパターンと原則
-- 🔄 **Before/After** - 改善点の比較
-- 📚 **学習ポイント** - このPRから学べること
 
 ## Requirements
 
 - Claude Code CLI
 - Git
 - GitHub MCP server (for PR information)
-- Obsidian (recommended) or any markdown editor
+- Obsidian (recommended) or any Markdown editor
 
 ## Installation
 
@@ -106,7 +119,7 @@ A conversational Claude Code skill for systematic deep code reading. Analyze com
 
 To update or uninstall, use the same **Plugins** tab.
 
-### Manual Installation (Alternative)
+### Manual Installation
 
 ```bash
 git clone https://github.com/Kuroakira/deep-code-reader.git
