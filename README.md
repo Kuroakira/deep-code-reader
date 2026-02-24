@@ -1,30 +1,30 @@
 # Deep Code Reader
 
-**Learn OSS codebases commit by commit — build an Obsidian knowledge base with AI-powered explanations**
+**Learn OSS codebases commit by commit — build a knowledge base with AI-powered explanations**
 
-A conversational Claude Code skill for systematic deep code reading. Analyze commits chronologically, understand how open source projects evolved, and automatically generate rich Markdown documentation into your Obsidian vault.
+A Claude Code skill for systematic deep code reading. Analyze commits chronologically, understand how open source projects evolved, and automatically generate rich Markdown documentation.
 
-## Why Obsidian?
+## Why?
 
-Deep Code Reader doesn't just explain code — it **builds a searchable knowledge base** in your Obsidian vault. Every commit analysis is saved as a Markdown file with Mermaid diagrams, design pattern breakdowns, and your own Q&A. Over time, you accumulate a structured library of architectural knowledge that you can browse, search, and annotate.
+Deep Code Reader doesn't just explain code — it **builds a searchable knowledge base**. Every commit analysis is saved as a Markdown file with Mermaid diagrams, design pattern breakdowns, and your own Q&A. Over time, you accumulate a structured library of architectural knowledge that you can browse, search, and annotate.
 
 ```mermaid
 graph LR
-    CC["🤖 Claude Code<br/>(analyze & explain)"]
-    OV["📓 Obsidian Vault<br/>(browse, search, & note)"]
-    CC -->|"generates Markdown"| OV
+    CC["Claude Code<br/>(analyze & explain)"]
+    OD["Output Directory<br/>(browse, search, & note)"]
+    CC -->|"generates Markdown"| OD
 
-    subgraph "Vault Structure"
+    subgraph "Output Structure"
         IDX["_index.md<br/>Project overview"]
         C1["0001-abc1234.md"]
         C2["0002-def5678.md"]
         C3["..."]
     end
 
-    OV --- IDX
-    OV --- C1
-    OV --- C2
-    OV --- C3
+    OD --- IDX
+    OD --- C1
+    OD --- C2
+    OD --- C3
 ```
 
 ## Quick Start
@@ -46,7 +46,7 @@ Start from the first commit?
 
 > Yes
 
-[Detailed analysis is displayed and saved to Obsidian]
+[Detailed analysis is displayed and saved]
 
 > Why is this pattern used here?
 
@@ -63,42 +63,51 @@ Start from the first commit?
 - **Rich analysis output** — Mermaid diagrams, design patterns, Before/After comparisons
 - **PR context included** — Discussion threads and review comments, translated and explained
 - **Q&A accumulation** — Your questions and answers are auto-saved to each commit's file
-- **Obsidian knowledge base** — All output is structured Markdown, ready to browse, search, and annotate
+- **Flexible output** — Defaults to Obsidian vault, configurable to any directory
+- **Session hooks** — Auto-detects active projects on session start
 
-## What You Can Say
+## Commands
 
-| Intent | Examples |
-|--------|---------|
-| Start | "I want to read express", "analyze react" |
-| Next commit | "next", "continue" |
-| Ask questions | "Why is this pattern used?", "What does this do?" |
-| View list | "commit list", "list" |
-| Check progress | "progress", "status" |
-| Read specific | "explain abc1234", "read PR #298" |
+All operations require explicit command invocation:
+
+| Command | Purpose |
+|---------|---------|
+| `/deep-code-reader` | Initialize or resume a project |
+| `/deep-code-reader:next` | Analyze the next commit |
+| `/deep-code-reader:read abc1234` | Analyze a specific commit by hash |
+| `/deep-code-reader:read #298` | Analyze a specific PR by number |
+| `/deep-code-reader:list` | Show commit list |
+| `/deep-code-reader:status` | Show reading progress |
 
 ## What Each Analysis Contains
 
 Every commit generates a Markdown file with:
 
-- 📋 **Basic info** — PR number, author, change size
-- 🎯 **Change summary** — Core concept, Before/After
-- 🏗️ **Architecture** — Visualized with Mermaid diagrams
-- 💻 **Code walkthrough** — With design rationale
-- 💬 **PR discussions** — Original English + Japanese translation + context
-- 🎓 **Design patterns** — Patterns and principles applied
-- 🔄 **Before/After** — Comparison of improvements
-- 📚 **Learning points** — Key takeaways from this commit
+- **Basic info** — PR number, author, change size
+- **Change summary** — Core concept, Before/After
+- **Architecture** — Visualized with Mermaid diagrams
+- **Code walkthrough** — With design rationale
+- **PR discussions** — Original English + Japanese translation + context
+- **Design patterns** — Patterns and principles applied
+- **Before/After** — Comparison of improvements
+- **Learning points** — Key takeaways from this commit
 
 ## Output Structure
 
 ```
-~/obsidian-vault/deep-code-reading/
-└── expressjs-express/
-    ├── _index.md              # Project overview
-    └── commits/
-        ├── 0001-abc1234.md    # Each commit analysis
-        ├── 0002-def5678.md
-        └── ...
+{output_path}/
+├── _index.md              # Project overview
+└── commits/
+    ├── 0001-abc1234.md    # Each commit analysis
+    ├── 0002-def5678.md
+    └── ...
+```
+
+Default output path: `~/obsidian-vault/deep-code-reading/{owner}-{repo}/`
+
+Custom output path:
+```
+/deep-code-reader expressjs/express --output ~/my-notes/express/
 ```
 
 ## Requirements
@@ -136,7 +145,7 @@ rm ~/.claude/skills/deep-code-reader
 Default paths:
 - Repos: `~/.claude/deep-code-reader/repos/`
 - Projects: `~/.claude/deep-code-reader/projects/`
-- Vault: `~/obsidian-vault/deep-code-reading/`
+- Output: `~/obsidian-vault/deep-code-reading/` (configurable)
 
 ## License
 

@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f ~/.claude/deep-code-reader/current.json ]; then echo '📚 Deep Code Reader active project:'; cat ~/.claude/deep-code-reader/current.json; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
